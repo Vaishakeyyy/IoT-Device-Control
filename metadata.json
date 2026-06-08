@@ -1,0 +1,6 @@
+{
+  "name": "IoT Device Dashboard",
+  "description": "An interactive, beautiful dashboard to control, monitor, schedule, and analyze home and workspace IoT devices with live simulated telemetry, custom room filters, schedulers, and analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
