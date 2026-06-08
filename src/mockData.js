@@ -1,6 +1,4 @@
-import { IoTDevice, AutomationRule, EnergyDataPoint, ActivityLog } from './types';
-
-export const initialDevices: IoTDevice[] = [
+export const initialDevices = [
   {
     id: 'dev-1',
     name: 'Living Room Pendant',
@@ -41,7 +39,7 @@ export const initialDevices: IoTDevice[] = [
     id: 'dev-4',
     name: 'Front Door Deadbolt',
     type: 'lock',
-    room: 'Garage', // Let's simplify and keep rooms bounded by ROOMS: 'Garage'
+    room: 'Garage',
     isOn: true, // true = locked, false = unlocked
     value: 100,
     metricUnit: 'Locked',
@@ -124,13 +122,13 @@ export const initialDevices: IoTDevice[] = [
   },
 ];
 
-export const initialAutomations: AutomationRule[] = [
+export const initialAutomations = [
   {
     id: 'auto-1',
     name: 'Sunset Pathway Lighting',
     triggerType: 'time',
     triggerDetail: '19:00',
-    targetDeviceId: 'dev-5', // Driveway floodlight
+    targetDeviceId: 'dev-5',
     action: 'turn_on',
     actionValue: 80,
     isEnabled: true,
@@ -141,8 +139,8 @@ export const initialAutomations: AutomationRule[] = [
     name: 'Midnight Lockdown',
     triggerType: 'time',
     triggerDetail: '23:30',
-    targetDeviceId: 'dev-4', // Front Door Deadbolt
-    action: 'turn_on', // Lock it
+    targetDeviceId: 'dev-4',
+    action: 'turn_on',
     actionValue: 100,
     isEnabled: true,
     days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -152,7 +150,7 @@ export const initialAutomations: AutomationRule[] = [
     name: 'Morning Coffee Pre-Heat',
     triggerType: 'time',
     triggerDetail: '07:15',
-    targetDeviceId: 'dev-7', // Kitchen plug
+    targetDeviceId: 'dev-7',
     action: 'turn_on',
     isEnabled: false,
     days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
@@ -162,15 +160,15 @@ export const initialAutomations: AutomationRule[] = [
     name: 'Eco Temp Away Mode',
     triggerType: 'time',
     triggerDetail: '09:00',
-    targetDeviceId: 'dev-2', // Nest thermostat
+    targetDeviceId: 'dev-2',
     action: 'set_value',
-    actionValue: 78, // cool down load in high heat
+    actionValue: 78,
     isEnabled: true,
     days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
   },
 ];
 
-export const initialLogs: ActivityLog[] = [
+export const initialLogs = [
   {
     id: 'log-1',
     timestamp: '05:42:15 AM',
@@ -209,7 +207,7 @@ export const initialLogs: ActivityLog[] = [
   }
 ];
 
-export const energyMockHistory: EnergyDataPoint[] = [
+export const energyMockHistory = [
   { time: '12 AM', lighting: 15, heating: 140, appliances: 85, total: 240 },
   { time: '02 AM', lighting: 5, heating: 120, appliances: 85, total: 210 },
   { time: '04 AM', lighting: 5, heating: 130, appliances: 110, total: 245 },

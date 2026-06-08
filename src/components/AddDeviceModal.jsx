@@ -1,21 +1,15 @@
 import React, { useState } from 'react';
-import { DeviceType, IoTDevice, ROOMS } from '../types';
-import { X, Plus, Lightbulb } from 'lucide-react';
+import { ROOMS } from '../types';
+import { X, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
 
-interface AddDeviceModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onAddDevice: (device: Omit<IoTDevice, 'id' | 'lastSeen'>) => void;
-}
-
-export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({
+export const AddDeviceModal = ({
   isOpen,
   onClose,
   onAddDevice,
 }) => {
   const [name, setName] = useState('');
-  const [type, setType] = useState<DeviceType>('light');
+  const [type, setType] = useState('light');
   const [room, setRoom] = useState(ROOMS[1]); // Default to first proper room 'Living Room'
   const [initialValue, setInitialValue] = useState(50);
   const [energyUsage, setEnergyUsage] = useState(15);
@@ -23,7 +17,7 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({
   if (!isOpen) return null;
 
   // Auto handle standard energy estimates by type to simplify user inputs
-  const handleTypeChange = (selectedType: DeviceType) => {
+  const handleTypeChange = (selectedType) => {
     setType(selectedType);
     switch (selectedType) {
       case 'light':
@@ -61,7 +55,7 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!name.trim()) return;
 
@@ -96,7 +90,7 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({
     onClose();
   };
 
-  const DEVICE_SELECTIONS: { type: DeviceType; label: string; desc: string }[] = [
+  const DEVICE_SELECTIONS = [
     { type: 'light', label: 'Smart Lightbulb', desc: 'LED light with dimming states' },
     { type: 'thermostat', label: 'Climate Controller', desc: 'Thermostat HVAC regulator' },
     { type: 'smart-plug', label: 'Appliance Plug', desc: 'Power sensor relay socket' },
@@ -108,57 +102,57 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fade-in" id="add-device-modal-portal">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in" id="add-device-modal-portal">
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-[#151518] rounded-2xl max-w-lg w-full overflow-hidden border border-[#222227] shadow-2xl"
+        className="bg-white rounded-xl max-w-lg w-full overflow-hidden border border-[#e2e8f0] shadow-2xl"
       >
-        <div className="flex items-center justify-between p-5 border-b border-[#222227]">
+        <div className="flex items-center justify-between p-5 border-b border-slate-100">
           <div>
-            <h3 className="font-sans font-bold text-white text-lg">Add New Smart Node</h3>
-            <p className="text-xs text-zinc-400 font-sans mt-0.5">Integrate and register a new simulation device with the local array.</p>
+            <h3 className="font-sans font-bold text-slate-800 text-sm">Add New Smart Node</h3>
+            <p className="text-[11px] text-slate-500 font-sans mt-0.5">Integrate and register a new simulation device with the local array.</p>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 hover:bg-[#222227] rounded-xl transition-all text-zinc-400 hover:text-white cursor-pointer"
+            className="p-1.5 hover:bg-slate-50 rounded-lg transition-colors text-slate-400 hover:text-slate-700 cursor-pointer"
             id="close-add-device-modal"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-5 space-y-4" id="form-device-create">
+        <form onSubmit={handleSubmit} className="p-5 space-y-4" id="form-device-create text-xs">
           {/* Device name */}
           <div>
-            <label className="block text-xs font-semibold font-sans text-zinc-450 mb-1.5">
+            <label className="block text-[10px] font-bold font-sans text-slate-600 mb-1.5 uppercase tracking-wider">
               Friendly Device Name
             </label>
             <input
               type="text"
-              placeholder="e.g. Master Bedroom Chandelier"
+              placeholder="e.g. Living Room Chandelier"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full text-xs font-sans px-3.5 py-3 bg-[#0c0c0e] border border-[#222227] text-zinc-100 rounded-xl focus:ring-1 focus:ring-zinc-650 focus:outline-none placeholder-zinc-550"
+              className="w-full text-xs font-sans px-3 py-2 bg-slate-50 border border-slate-200 text-slate-800 rounded-lg focus:ring-1 focus:ring-blue-500 focus:outline-none placeholder-slate-400"
               required
               maxLength={40}
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {/* Room choice */}
             <div>
-              <label className="block text-xs font-semibold font-sans text-zinc-450 mb-1.5">
+              <label className="block text-[10px] font-bold font-sans text-slate-600 mb-1.5 uppercase tracking-wider">
                 Assigned Zone / Room
               </label>
               <select
                 value={room}
                 onChange={(e) => setRoom(e.target.value)}
-                className="w-full text-xs font-sans px-3 py-2.5 bg-[#0c0c0e] border border-[#222227] text-zinc-100 rounded-xl focus:outline-none focus:ring-1 focus:ring-zinc-650"
+                className="w-full text-xs font-sans px-3 py-2 bg-slate-50 border border-slate-100 text-slate-800 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 {ROOMS.filter((r) => r !== 'All Rooms').map((r) => (
-                  <option key={r} value={r} className="bg-[#151518] text-white">
+                  <option key={r} value={r} className="text-slate-800">
                     {r}
                   </option>
                 ))}
@@ -167,7 +161,7 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({
 
             {/* Power Estimate */}
             <div>
-              <label className="block text-xs font-semibold font-sans text-zinc-450 mb-1.5">
+              <label className="block text-[10px] font-bold font-sans text-slate-600 mb-1.5 uppercase tracking-wider">
                 Idle Wattage (W)
               </label>
               <input
@@ -176,7 +170,7 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({
                 max="3000"
                 value={energyUsage}
                 onChange={(e) => setEnergyUsage(parseInt(e.target.value) || 0)}
-                className="w-full text-xs font-sans px-3 py-2 bg-[#0c0c0e] border border-[#222227] text-zinc-100 rounded-xl focus:outline-none"
+                className="w-full text-xs font-sans px-3 py-2 bg-slate-50 border border-slate-100 text-slate-800 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
                 required
               />
             </div>
@@ -184,23 +178,23 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({
 
           {/* Type Select grid */}
           <div>
-            <label className="block text-xs font-semibold font-sans text-zinc-450 mb-2">
+            <label className="block text-[10px] font-bold font-sans text-slate-600 mb-2 uppercase tracking-wider">
               Device Template Type
             </label>
-            <div className="grid grid-cols-2 gap-2 max-h-[180px] overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[160px] overflow-y-auto pr-1">
               {DEVICE_SELECTIONS.map((item) => (
                 <button
                   key={item.type}
                   type="button"
                   onClick={() => handleTypeChange(item.type)}
-                  className={`flex flex-col items-start p-2.5 rounded-xl border text-left cursor-pointer transition-all ${
+                  className={`flex flex-col items-start p-2 rounded-lg border text-left cursor-pointer transition-all ${
                     type === item.type
-                      ? 'bg-white border-white text-black shadow-sm'
-                      : 'bg-[#0c0c0e] border-[#222227] text-zinc-300 hover:bg-[#151518]'
+                      ? 'bg-slate-900 border-slate-900 text-white shadow-xs'
+                      : 'bg-slate-50 border-slate-202 border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-800'
                   }`}
                 >
-                  <span className="text-xs font-bold font-sans">{item.label}</span>
-                  <span className={`text-[9px] mt-0.5 leading-tight ${type === item.type ? 'text-zinc-700' : 'text-zinc-500'}`}>
+                  <span className="text-[11px] font-bold font-sans">{item.label}</span>
+                  <span className={`text-[9px] leading-tight ${type === item.type ? 'text-slate-350' : 'text-slate-400'}`}>
                     {item.desc}
                   </span>
                 </button>
@@ -208,19 +202,19 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({
             </div>
           </div>
 
-          <div className="flex justify-end gap-2.5 pt-4 border-t border-[#222227] text-xs">
+          <div className="flex justify-end gap-2 pt-4 border-t border-slate-100 text-xs">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-[#222227] hover:bg-[#222227] font-semibold text-zinc-300 rounded-xl cursor-pointer"
+              className="px-3.5 py-1.5 text-slate-500 hover:text-slate-800 font-bold rounded-lg cursor-pointer font-sans"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-white text-zinc-950 font-bold rounded-xl hover:bg-zinc-100 transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
+              className="px-4 py-1.5 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors cursor-pointer flex items-center gap-1 shadow-xs"
             >
-              <Plus className="w-4 h-4" /> Assemble Node
+              <Plus className="w-3.5 h-3.5" /> Assemble Node
             </button>
           </div>
         </form>

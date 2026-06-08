@@ -31,3 +31,706 @@
 .animate-fade-in {
   animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* ==========================================================================
+   AUTHENTIC DARK THEME STYLING OVERRIDES (SYNAPSE MODERN COSMIC)
+   ========================================================================== */
+
+html.dark {
+  background-color: #020617 !important; /* bg-slate-950 */
+  color: #f1f5f9 !important; /* text-slate-100 */
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: #020617 !important;
+  color: #f1f5f9 !important;
+}
+
+/* Overwrite common Light UI components with Dark counterparts */
+html.dark .bg-white {
+  background-color: #0b0f19 !important; /* premium cosmic dark blue-grey card */
+}
+
+/* App Outer background fallback */
+html.dark .bg-\[\#f8fafc\] {
+  background-color: #020617 !important;
+}
+
+/* Subpanels / internal controls */
+html.dark .bg-slate-50,
+html.dark .bg-slate-100\/50 {
+  background-color: #111827 !important; /* bg-slate-900 */
+}
+
+html.dark .bg-slate-100 {
+  background-color: #1e293b !important; /* bg-slate-800 */
+}
+
+html.dark .hover\:bg-slate-50:hover,
+html.dark .hover\:bg-slate-100\/30:hover {
+  background-color: #111827 !important;
+}
+
+html.dark .hover\:bg-slate-100:hover,
+html.dark .hover\:bg-slate-200:hover {
+  background-color: #1e293b !important;
+}
+
+/* Borders and lines */
+html.dark .border,
+html.dark .border-b,
+html.dark .border-t,
+html.dark .border-r,
+html.dark .border-[#e2e8f0],
+html.dark .border-slate-100,
+html.dark .border-slate-200,
+html.dark .border-slate-250,
+html.dark .border-slate-205,
+html.dark .border-slate-202 {
+  border-color: #1e293b !important; /* sleek thin borderline */
+}
+
+/* Scrollbar tweaks for dark */
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Table layout zebra stripping in dark mode */
+html.dark .bg-slate-50\/50,
+html.dark .bg-slate-50\/20 {
+  background-color: #0a0e17 !important;
+}
+
+/* Typography styles for highest readability core */
+html.dark .text-slate-800,
+html.dark .text-slate-900,
+html.dark .text-slate-850,
+html.dark .text-slate-700,
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark .text-slate-650 {
+  color: #f8fafc !important; /* premium clear silver white */
+}
+
+html.dark .text-slate-500,
+html.dark .text-slate-600,
+html.dark .text-slate-400,
+html.dark .text-slate-450 {
+  color: #94a3b8 !important; /* soft steel grey description */
+}
+
+/* Controls, Inputs, and Dropdowns */
+html.dark select,
+html.dark input[type="text"],
+html.dark input[type="number"],
+html.dark input[type="range"] {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+  border-color: #1e293b !important;
+}
+
+html.dark select option {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+}
+
+/* Sliders background strip */
+html.dark input[type="range"] {
+  background-color: #1e293b !important;
+}
+
+/* Mobile responsive tab indicators */
+html.dark .lg\:hidden.flex {
+  background-color: #111827 !important;
+}
+
+/* Badge and Warning overlays */
+html.dark .bg-blue-50 {
+  background-color: #172554 !important; /* slate dark-blue text pill */
+  color: #93c5fd !important;
+  border-color: #1e3a8a !important;
+}
+
+html.dark .bg-rose-50 {
+  background-color: #450a0a !important;
+  color: #fca5a5 !important;
+  border-color: #7f1d1d !important;
+}
+
+html.dark .bg-amber-50 {
+  background-color: #422006 !important;
+  color: #fde047 !important;
+  border-color: #713f12 !important;
+}
+
+html.dark .bg-indigo-50 {
+  background-color: #1e1b4b !important;
+  color: #c7d2fe !important;
+  border-color: #312e81 !important;
+}
+
+html.dark .bg-emerald-50 {
+  background-color: #022c22 !important;
+  color: #a7f3d0 !important;
+  border-color: #064e3b !important;
+}
+
+html.dark .bg-sky-50 {
+  background-color: #082f49 !important;
+  color: #bae6fd !important;
+  border-color: #0c4a6e !important;
+}
+
+html.dark .bg-fuchsia-50 {
+  background-color: #4a044e !important;
+  color: #f5d0fe !important;
+  border-color: #701a75 !important;
+}
+
+html.dark .bg-teal-50 {
+  background-color: #042f2e !important;
+  color: #99f6e4 !important;
+  border-color: #115e59 !important;
+}
+
+/* Text status overrides */
+html.dark .text-rose-700 {
+  color: #fca5a5 !important;
+}
+
+html.dark .text-amber-700 {
+  color: #fde047 !important;
+}
+
+html.dark .text-emerald-700 {
+  color: #34d399 !important;
+}
+
+/* UI Structure Overrides */
+html.dark aside,
+html.dark header,
+html.dark footer {
+  background-color: #0b0f19 !important;
+  border-color: #1e293b !important;
+}
+
+/* Recharts Telemetry Chart Overrides */
+html.dark .recharts-cartesian-grid-horizontal line {
+  stroke: #1e293b !important;
+}
+
+html.dark .recharts-default-tooltip {
+  background-color: #0f172a !important;
+  border: 1px solid #1e293b !important;
+}
+
+html.dark .recharts-tooltip-item {
+  color: #f1f5f9 !important;
+}
+
+html.dark .recharts-legend-item-text {
+  color: #94a3b8 !important;
+}
+
+/* Login Page fallback overrides */
+html.dark .from-slate-50 {
+  --tw-gradient-from: #020617 !important;
+  --tw-gradient-stops: var(--tw-gradient-from), #0b0f19 !important;
+}
+
+/* ==========================================================================
+   FOREST MOSS THEME OVERRIDES (EARTHY WOODLAND & WARM SAGE CREAM)
+   ========================================================================== */
+
+html.theme-forest {
+  background-color: #f2efea !important;
+  color: #1a2e20 !important;
+}
+
+html.theme-forest body {
+  background-color: #f2efea !important;
+  color: #1a2e20 !important;
+}
+
+/* Paper warm cards instead of stark white */
+html.theme-forest .bg-white {
+  background-color: #fcfbfa !important;
+  border-color: #dedbd3 !important;
+}
+
+/* App Outer background */
+html.theme-forest .bg-\[\#f8fafc\] {
+  background-color: #f2efea !important;
+}
+
+/* Muted buttons, accents, highlights override to pine forest green */
+html.theme-forest .bg-blue-600 {
+  background-color: #2c5e3b !important;
+  color: #ffffff !important;
+}
+
+html.theme-forest .hover\:bg-blue-700:hover {
+  background-color: #1e3d27 !important;
+}
+
+html.theme-forest .text-blue-650,
+html.theme-forest .text-blue-600 {
+  color: #2c5e3b !important;
+}
+
+html.theme-forest .border-blue-500 {
+  border-color: #2c5e3b !important;
+}
+
+html.theme-forest .ring-blue-500 {
+  --tw-ring-color: #2c5e3b !important;
+}
+
+/* Typography styles for woodsy green color harmony */
+html.theme-forest .text-slate-800,
+html.theme-forest .text-slate-900,
+html.theme-forest h1,
+html.theme-forest h2,
+html.theme-forest h3,
+html.theme-forest h4 {
+  color: #1a2e20 !important;
+}
+
+html.theme-forest .text-slate-500,
+html.theme-forest .text-slate-600,
+html.theme-forest .text-slate-400 {
+  color: #5c6e5e !important;
+}
+
+/* Sandstone borders and separators */
+html.theme-forest .border,
+html.theme-forest .border-b,
+html.theme-forest .border-t,
+html.theme-forest .border-r,
+html.theme-forest .border-[#e2e8f0],
+html.theme-forest .border-slate-100,
+html.theme-forest .border-slate-200 {
+  border-color: #dedbd3 !important;
+}
+
+html.theme-forest .bg-slate-50,
+html.theme-forest .bg-slate-100\/50 {
+  background-color: #eae7df !important;
+}
+
+html.theme-forest .hover\:bg-slate-50:hover {
+  background-color: #dedbd3 !important;
+}
+
+/* ==========================================================================
+   NORDIC FROST THEME OVERRIDES (CRISP ICE TEALS AND FROST SLATES)
+   ========================================================================== */
+
+html.theme-nordic {
+  background-color: #0b111e !important;
+}
+
+html.theme-nordic body {
+  background-color: #0b111e !important;
+}
+
+/* Deep cold slate cards */
+html.theme-nordic .bg-white {
+  background-color: #121c2c !important;
+  border-color: #1e2e46 !important;
+}
+
+html.theme-nordic .bg-\[\#f8fafc\] {
+  background-color: #0b111e !important;
+}
+
+/* Subpanels/controls in nordic mode */
+html.theme-nordic .bg-slate-50,
+html.theme-nordic .bg-slate-100\/50 {
+  background-color: #1a273a !important;
+}
+
+/* Ice-teal active badges and action-controllers */
+html.theme-nordic .bg-blue-600 {
+  background-color: #0ea5e9 !important;
+  color: #ffffff !important;
+}
+
+html.theme-nordic .hover\:bg-blue-700:hover {
+  background-color: #0284c7 !important;
+}
+
+html.theme-nordic .text-blue-650,
+html.theme-nordic .text-blue-600 {
+  color: #38bdf8 !important;
+}
+
+/* Ice crystal theme cyan highlights */
+html.theme-nordic .border-blue-500 {
+  border-color: #0ea5e9 !important;
+}
+
+html.theme-nordic .text-slate-800,
+html.theme-nordic .text-slate-900,
+html.theme-nordic h1,
+html.theme-nordic h2,
+html.theme-nordic h3 {
+  color: #f1f5f9 !important;
+}
+
+html.theme-nordic .text-slate-500,
+html.theme-nordic .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
+html.theme-nordic .border,
+html.theme-nordic .border-b,
+html.theme-nordic .border-t,
+html.theme-nordic .border-[#e2e8f0],
+html.theme-nordic .border-slate-101,
+html.theme-nordic .border-slate-200 {
+  border-color: #1e2e46 !important;
+}
+
+/* ==========================================================================
+   VINTAGE CYBER TERMINAL THEME OVERRIDES (AMBER GLOW COMPUTER CHASSIS)
+   ========================================================================== */
+
+html.theme-cyberpunk {
+  background-color: #000000 !important;
+  color: #f59e0b !important;
+}
+
+html.theme-cyberpunk body {
+  background-color: #000000 !important;
+  color: #f59e0b !important;
+}
+
+/* Pitch black glass cards with high-contrast amber borders */
+html.theme-cyberpunk .bg-white {
+  background-color: #080808 !important;
+  border-color: #f59e0b !important;
+  border-width: 1px !important;
+}
+
+html.theme-cyberpunk .bg-\[\#f8fafc\] {
+  background-color: #000000 !important;
+}
+
+/* Retro glowing text */
+html.theme-cyberpunk .text-slate-800,
+html.theme-cyberpunk .text-slate-900,
+html.theme-cyberpunk h1,
+html.theme-cyberpunk h2,
+html.theme-cyberpunk h3,
+html.theme-cyberpunk h4,
+html.theme-cyberpunk .text-slate-100 {
+  color: #f59e0b !important;
+  text-shadow: 0 0 5px rgba(245, 158, 11, 0.4) !important;
+  font-family: var(--font-mono) !important;
+}
+
+html.theme-cyberpunk .text-slate-500,
+html.theme-cyberpunk .text-slate-600,
+html.theme-cyberpunk .text-slate-400 {
+  color: #b45309 !important;
+  font-family: var(--font-mono) !important;
+}
+
+/* Retro tactile buttons */
+html.theme-cyberpunk .bg-blue-600 {
+  background-color: #f59e0b !important;
+  color: #000000 !important;
+  font-weight: 800 !important;
+  border: 1px solid #f59e0b !important;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.3) !important;
+}
+
+html.theme-cyberpunk .bg-blue-600 svg {
+  stroke: #000000 !important;
+}
+
+html.theme-cyberpunk .hover\:bg-blue-700:hover {
+  background-color: #d97706 !important;
+  color: #000000 !important;
+}
+
+html.theme-cyberpunk .text-blue-600 {
+  color: #f59e0b !important;
+}
+
+html.theme-cyberpunk .border,
+html.theme-cyberpunk .border-b,
+html.theme-cyberpunk .border-t,
+html.theme-cyberpunk .border-r,
+html.theme-cyberpunk .border-[#e2e8f0],
+html.theme-cyberpunk .border-slate-100,
+html.theme-cyberpunk .border-slate-200 {
+  border-color: #1c1c1c !important;
+}
+
+html.theme-cyberpunk .bg-slate-50,
+html.theme-cyberpunk .bg-slate-100\/50 {
+  background-color: #121212 !important;
+  border: 1px solid #262626 !important;
+}
+
+html.theme-cyberpunk select,
+html.theme-cyberpunk input[type="text"],
+html.theme-cyberpunk input[type="number"],
+html.theme-cyberpunk input[type="range"] {
+  background-color: #080808 !important;
+  color: #f59e0b !important;
+  border-color: #f59e0b !important;
+  font-family: var(--font-mono) !important;
+}
+
+html.theme-cyberpunk select option {
+  background-color: #080808 !important;
+  color: #f59e0b !important;
+}
+
+/* Override chart colors slightly so labels are amber too */
+html.theme-cyberpunk .recharts-text {
+  fill: #f59e0b !important;
+}
+html.theme-cyberpunk .recharts-legend-item-text {
+  color: #f59e0b !important;
+}
+html.theme-cyberpunk .recharts-cartesian-grid-horizontal line {
+  stroke: #262626 !important;
+}
+
+/* ==========================================================================
+   DRACULA OBSIDIAN THEME OVERRIDES (RICH PURPLES & HOT NEON PINKS)
+   ========================================================================== */
+
+html.theme-dracula {
+  background-color: #0c0714 !important;
+  color: #f8f8f2 !important;
+}
+
+html.theme-dracula body {
+  background-color: #0c0714 !important;
+  color: #f8f8f2 !important;
+}
+
+/* Deep purple glass style cards */
+html.theme-dracula .bg-white {
+  background-color: #120d24 !important;
+  border-color: #281d45 !important;
+}
+
+html.theme-dracula .bg-\[\#f8fafc\] {
+  background-color: #0c0714 !important;
+}
+
+/* Subpanels & inner sections in dracula */
+html.theme-dracula .bg-slate-50,
+html.theme-dracula .bg-slate-100\/50 {
+  background-color: #181230 !important;
+}
+
+/* Hot Pink active buttons & accents */
+html.theme-dracula .bg-blue-600 {
+  background-color: #ff79c6 !important;
+  color: #000000 !important;
+  font-weight: 800 !important;
+}
+
+html.theme-dracula .hover\:bg-blue-700:hover {
+  background-color: #ff92df !important;
+  color: #000000 !important;
+}
+
+html.theme-dracula .text-blue-650,
+html.theme-dracula .text-blue-600 {
+  color: #ff79c6 !important;
+}
+
+/* Radiant borders & accents */
+html.theme-dracula .border-blue-500 {
+  border-color: #ff79c6 !important;
+}
+
+html.theme-dracula .text-slate-800,
+html.theme-dracula .text-slate-900,
+html.theme-dracula h1,
+html.theme-dracula h2,
+html.theme-dracula h3,
+html.theme-dracula h4,
+html.theme-dracula .text-slate-100 {
+  color: #f8f8f2 !important;
+  text-shadow: 0 0 3px rgba(255, 121, 198, 0.2) !important;
+}
+
+html.theme-dracula .text-slate-500,
+html.theme-dracula .text-slate-600,
+html.theme-dracula .text-indigo-600 {
+  color: #bd93f9 !important; /* Elegant Dracula purple comments/labels */
+}
+
+html.theme-dracula .text-slate-400 {
+  color: #6272a4 !important; /* Classic Dracula grey comments */
+}
+
+/* Sandstone style borders & inputs for dracula */
+html.theme-dracula .border,
+html.theme-dracula .border-b,
+html.theme-dracula .border-t,
+html.theme-dracula .border-[#e2e8f0],
+html.theme-dracula .border-slate-100,
+html.theme-dracula .border-slate-200 {
+  border-color: #281d45 !important;
+}
+
+html.theme-dracula select,
+html.theme-dracula input[type="text"],
+html.theme-dracula input[type="number"],
+html.theme-dracula input[type="range"] {
+  background-color: #07040b !important;
+  color: #f8f8f2 !important;
+  border-color: #281d45 !important;
+}
+
+html.theme-dracula select option {
+  background-color: #07040b !important;
+  color: #f8f8f2 !important;
+}
+
+/* Telemetry / charts / labels configuration overrides in Dracula */
+html.theme-dracula .recharts-text {
+  fill: #bd93f9 !important;
+}
+html.theme-dracula .recharts-legend-item-text {
+  color: #bd93f9 !important;
+}
+html.theme-dracula .recharts-cartesian-grid-horizontal line {
+  stroke: #281d45 !important;
+}
+
+/* Clean transparent gradient for Login background in Dracula */
+html.theme-dracula .from-slate-50 {
+  --tw-gradient-from: #0c0714 !important;
+  --tw-gradient-stops: var(--tw-gradient-from), #120d24 !important;
+}
+
+/* ==========================================================================
+   DIM SLATE / LIGHT-DARK THEME (SOFT CONTRAST GREYS & GENTLE CHARCOALS)
+   ========================================================================== */
+
+html.theme-lightdark {
+  background-color: #1a2333 !important; /* lightened blue-gray bedrock */
+  color: #e2e8f0 !important; /* soft white-silver */
+}
+
+html.theme-lightdark body {
+  background-color: #1a2333 !important;
+  color: #e2e8f0 !important;
+}
+
+/* Cards configured as medium-density slate rather than absolute black */
+html.theme-lightdark .bg-white {
+  background-color: #243044 !important;
+  border-color: #384a66 !important;
+}
+
+/* App Outer background */
+html.theme-lightdark .bg-\[\#f8fafc\] {
+  background-color: #1a2333 !important;
+}
+
+/* Subpanels & inner sections in lightdark */
+html.theme-lightdark .bg-slate-50,
+html.theme-lightdark .bg-slate-100\/50 {
+  background-color: #131a26 !important;
+}
+
+/* Gentle modern slate-blue buttons & accents */
+html.theme-lightdark .bg-blue-600 {
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+html.theme-lightdark .hover\:bg-blue-700:hover {
+  background-color: #2563eb !important;
+}
+
+html.theme-lightdark .text-blue-650,
+html.theme-lightdark .text-blue-600 {
+  color: #60a5fa !important;
+}
+
+/* High readability borders & accents */
+html.theme-lightdark .border-blue-500 {
+  border-color: #3b82f6 !important;
+}
+
+html.theme-lightdark .text-slate-800,
+html.theme-lightdark .text-slate-900,
+html.theme-lightdark h1,
+html.theme-lightdark h2,
+html.theme-lightdark h3,
+html.theme-lightdark h4,
+html.theme-lightdark .text-slate-100 {
+  color: #f1f5f9 !important;
+}
+
+html.theme-lightdark .text-slate-500,
+html.theme-lightdark .text-slate-600,
+html.theme-lightdark .text-indigo-600 {
+  color: #94a3b8 !important; /* Soft slate gray comments/labels */
+}
+
+html.theme-lightdark .text-slate-400 {
+  color: #64748b !important;
+}
+
+/* Slate styled borders & inputs */
+html.theme-lightdark .border,
+html.theme-lightdark .border-b,
+html.theme-lightdark .border-t,
+html.theme-lightdark .border-[#e2e8f0],
+html.theme-lightdark .border-slate-100,
+html.theme-lightdark .border-slate-200 {
+  border-color: #384a66 !important;
+}
+
+html.theme-lightdark select,
+html.theme-lightdark input[type="text"],
+html.theme-lightdark input[type="number"],
+html.theme-lightdark input[type="range"] {
+  background-color: #131a26 !important;
+  color: #f1f5f9 !important;
+  border-color: #384a66 !important;
+}
+
+html.theme-lightdark select option {
+  background-color: #131a26 !important;
+  color: #f1f5f9 !important;
+}
+
+/* Telemetry / charts / labels configuration overrides in lightdark */
+html.theme-lightdark .recharts-text {
+  fill: #94a3b8 !important;
+}
+html.theme-lightdark .recharts-legend-item-text {
+  color: #94a3b8 !important;
+}
+html.theme-lightdark .recharts-cartesian-grid-horizontal line {
+  stroke: #384a66 !important;
+}
+
+/* Soft gradient for Login background in lightdark */
+html.theme-lightdark .from-slate-50 {
+  --tw-gradient-from: #1a2333 !important;
+  --tw-gradient-stops: var(--tw-gradient-from), #243044 !important;
+}
+
+

@@ -12,17 +12,11 @@ import {
   Bar,
   Cell,
 } from 'recharts';
-import { EnergyDataPoint } from '../types';
 import { energyMockHistory } from '../mockData';
-import { motion, AnimatePresence } from 'motion/react';
 import { Leaf, Info } from 'lucide-react';
 
-interface TelemetryChartProps {
-  data?: EnergyDataPoint[];
-}
-
-export const TelemetryChart: React.FC<TelemetryChartProps> = ({ data = energyMockHistory }) => {
-  const [viewMode, setViewMode] = useState<'stack' | 'total'>('stack');
+export const TelemetryChart = ({ data = energyMockHistory }) => {
+  const [viewMode, setViewMode] = useState('stack');
 
   // Compute stats
   const averageHourlyConsumption = Math.round(
@@ -35,36 +29,36 @@ export const TelemetryChart: React.FC<TelemetryChartProps> = ({ data = energyMoc
   const dailyCarbonEst = ((averageHourlyConsumption * 24) / 1000) * 0.85; // lbs of CO2
 
   return (
-    <div className="bg-[#151518] border border-[#222227] rounded-2xl p-6 shadow-md flex flex-col justify-between h-full" id="telemetry-chart-container">
+    <div className="bg-white border border-[#e2e8f0] rounded-xl p-5 shadow-xs flex flex-col justify-between h-full animate-fade-in" id="telemetry-chart-container">
       <div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div>
-            <h3 className="font-sans font-bold text-white text-lg">
+            <h3 className="font-sans font-bold text-slate-800 text-sm">
               Telemetry Analytics
             </h3>
-            <p className="text-xs text-zinc-400 font-sans mt-0.5">
+            <p className="text-[11px] text-slate-500 font-sans mt-0.5">
               Comparative analysis of active grid draws and energy distribution.
             </p>
           </div>
 
           {/* Toggle buttons */}
-          <div className="flex items-center space-x-1 bg-[#0c0c0e] p-1 rounded-xl border border-[#222227]">
+          <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg border border-slate-205 border-slate-200">
             <button
               onClick={() => setViewMode('stack')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-sans font-medium transition-all cursor-pointer ${
+              className={`px-2.5 py-1 rounded text-[11px] font-sans font-bold transition-colors cursor-pointer ${
                 viewMode === 'stack'
-                  ? 'bg-[#151518] text-white border border-[#222227] shadow-sm'
-                  : 'text-zinc-400 hover:text-zinc-200'
-              }`}
+                  ? 'bg-white text-slate-900 border border-slate-200 shadow-xs'
+                  : 'text-slate-500 hover:text-slate-800'
+               }`}
             >
               Category Breakdown
             </button>
             <button
               onClick={() => setViewMode('total')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-sans font-medium transition-all cursor-pointer ${
+              className={`px-2.5 py-1 rounded text-[11px] font-sans font-bold transition-colors cursor-pointer ${
                 viewMode === 'total'
-                  ? 'bg-[#151518] text-white border border-[#222227] shadow-sm'
-                  : 'text-zinc-400 hover:text-zinc-200'
+                  ? 'bg-white text-slate-900 border border-slate-200 shadow-xs'
+                  : 'text-slate-500 hover:text-slate-800'
               }`}
             >
               Combined demand
@@ -73,44 +67,44 @@ export const TelemetryChart: React.FC<TelemetryChartProps> = ({ data = energyMoc
         </div>
 
         {/* Highlight insights */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 my-5">
-          <div className="bg-[#0c0c0e] p-3 rounded-xl border border-[#222227]">
-            <span className="text-[10px] text-zinc-500 font-sans block uppercase font-semibold">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 my-4">
+          <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
+            <span className="text-[9px] text-slate-400 font-sans block uppercase font-bold tracking-wide">
               Peak System Load
             </span>
-            <span className="text-sm font-sans font-bold text-white">
+            <span className="text-sm font-sans font-extrabold text-slate-800 leading-none block mt-1">
               {peakDraw} W
             </span>
-            <span className="text-[10px] text-zinc-400 font-sans block">
+            <span className="text-[9px] text-slate-450 font-sans block mt-1 leading-none">
               Registered at {peakTime}
             </span>
           </div>
-          <div className="bg-[#0c0c0e] p-3 rounded-xl border border-[#222227]">
-            <span className="text-[10px] text-zinc-500 font-sans block uppercase font-semibold">
+          <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
+            <span className="text-[9px] text-slate-400 font-sans block uppercase font-bold tracking-wide">
               Average load rate
             </span>
-            <span className="text-sm font-sans font-bold text-white">
+            <span className="text-sm font-sans font-extrabold text-slate-800 leading-none block mt-1">
               {averageHourlyConsumption} W
             </span>
-            <span className="text-[10px] text-emerald-400 font-sans block flex items-center gap-1">
-              <Leaf className="w-3 h-3" /> Eco Mode: -15% optimal
+            <span className="text-[9px] text-emerald-600 font-sans font-bold block mt-1 flex items-center gap-0.5 leading-none">
+              <Leaf className="w-2.5 h-2.5" /> Eco Mode: -15% optimal
             </span>
           </div>
-          <div className="bg-[#0c0c0e] p-3 rounded-xl border border-[#222227] col-span-2 lg:col-span-1">
-            <span className="text-[10px] text-zinc-500 font-sans block uppercase font-semibold">
+          <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 col-span-2 lg:col-span-1">
+            <span className="text-[9px] text-slate-400 font-sans block uppercase font-bold tracking-wide">
               Carbon Footprint est.
             </span>
-            <span className="text-sm font-sans font-bold text-white">
+            <span className="text-sm font-sans font-extrabold text-slate-800 leading-none block mt-1">
               ~{dailyCarbonEst.toFixed(1)} lbs
             </span>
-            <span className="text-[10px] text-zinc-400 font-sans block">
-              CO₂ eq per 24 hour cycle
+            <span className="text-[9px] text-slate-450 font-sans block mt-1 leading-none">
+              CO₂ eq per 24 hr cycles
             </span>
           </div>
         </div>
 
         {/* Render Chart */}
-        <div className="h-72 w-full mt-4 font-mono text-[10px]">
+        <div className="h-64 w-full mt-3 font-mono text-[10px]">
           <ResponsiveContainer width="100%" height="100%">
             {viewMode === 'stack' ? (
               <AreaChart data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
@@ -128,20 +122,19 @@ export const TelemetryChart: React.FC<TelemetryChartProps> = ({ data = energyMoc
                     <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#222227" />
-                <XAxis dataKey="time" stroke="#52525b" tickLine={false} />
-                <YAxis stroke="#52525b" tickLine={false} unit="W" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="time" stroke="#94a3b8" tickLine={false} />
+                <YAxis stroke="#94a3b8" tickLine={false} unit="W" />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#151518',
-                    borderRadius: '12px',
-                    border: '1px solid #222227',
-                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.3)',
-                    color: '#e1e1e6',
+                    backgroundColor: '#ffffff',
+                    borderRadius: '8px',
+                    border: '1px solid #e2e8f0',
+                    color: '#1e293b',
+                    fontSize: '11px',
                   }}
-                  itemStyle={{ color: '#ffffff' }}
                 />
-                <Legend iconType="circle" wrapperStyle={{ paddingTop: 10 }} />
+                <Legend iconType="circle" wrapperStyle={{ paddingTop: 10, fontSize: '11px' }} />
                 <Area
                   type="monotone"
                   dataKey="lighting"
@@ -172,25 +165,24 @@ export const TelemetryChart: React.FC<TelemetryChartProps> = ({ data = energyMoc
               </AreaChart>
             ) : (
               <BarChart data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#222227" />
-                <XAxis dataKey="time" stroke="#52525b" tickLine={false} />
-                <YAxis stroke="#52525b" tickLine={false} unit="W" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="time" stroke="#94a3b8" tickLine={false} />
+                <YAxis stroke="#94a3b8" tickLine={false} unit="W" />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#151518',
-                    borderRadius: '12px',
-                    border: '1px solid #222227',
-                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.3)',
-                    color: '#e1e1e6',
+                    backgroundColor: '#ffffff',
+                    borderRadius: '8px',
+                    border: '1px solid #e2e8f0',
+                    color: '#1e293b',
+                    fontSize: '11px',
                   }}
-                  itemStyle={{ color: '#ffffff' }}
                 />
-                <Legend iconType="circle" wrapperStyle={{ paddingTop: 10 }} />
-                <Bar dataKey="total" name="Total combined load" fill="#27272a" radius={[4, 4, 0, 0]}>
+                <Legend iconType="circle" wrapperStyle={{ paddingTop: 10, fontSize: '11px' }} />
+                <Bar dataKey="total" name="Total combined load" fill="#94a3b8" radius={[4, 4, 0, 0]}>
                   {data.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
-                      fill={entry.total > 700 ? '#ef4444' : '#27272a'} // Highlight peak load rates red
+                      fill={entry.total > 700 ? '#ef4444' : '#64748b'}
                     />
                   ))}
                 </Bar>
@@ -200,9 +192,9 @@ export const TelemetryChart: React.FC<TelemetryChartProps> = ({ data = energyMoc
         </div>
       </div>
 
-      <div className="mt-4 border-t border-[#222227] pt-3 flex items-start gap-2.5 bg-indigo-950/25 p-3 rounded-xl border border-indigo-500/20">
-        <Info className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
-        <p className="text-[11px] font-sans text-zinc-405 leading-relaxed text-zinc-400">
+      <div className="mt-4 flex items-start gap-2 bg-blue-50/50 p-3 rounded-lg border border-blue-100">
+        <Info className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
+        <p className="text-[11px] font-sans text-slate-655 leading-normal text-slate-500">
           <strong>Grid Advice:</strong> Peak drawing occurs between <strong>6 PM – 9 PM</strong>. Enabling eco-timers or staggering automated sweeps during this time could reduce weekly energy costs by up to <strong>22%</strong>.
         </p>
       </div>
