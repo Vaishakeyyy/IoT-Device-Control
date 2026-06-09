@@ -101,7 +101,7 @@ html.dark .border,
 html.dark .border-b,
 html.dark .border-t,
 html.dark .border-r,
-html.dark .border-[#e2e8f0],
+html.dark .border-\[\#e2e8f0\],
 html.dark .border-slate-100,
 html.dark .border-slate-200 {
   border-color: #1e293b !important; /* sleek thin borderline */
@@ -329,7 +329,7 @@ html.theme-forest .border,
 html.theme-forest .border-b,
 html.theme-forest .border-t,
 html.theme-forest .border-r,
-html.theme-forest .border-[#e2e8f0],
+html.theme-forest .border-\[\#e2e8f0\],
 html.theme-forest .border-slate-100,
 html.theme-forest .border-slate-200 {
   border-color: #dedbd3 !important;
@@ -414,7 +414,7 @@ html.theme-nordic .text-slate-600 {
 html.theme-nordic .border,
 html.theme-nordic .border-b,
 html.theme-nordic .border-t,
-html.theme-nordic .border-[#e2e8f0],
+html.theme-nordic .border-\[\#e2e8f0\],
 html.theme-nordic .border-slate-101,
 html.theme-nordic .border-slate-200 {
   border-color: #1e2e46 !important;
@@ -497,7 +497,7 @@ html.theme-cyberpunk .border,
 html.theme-cyberpunk .border-b,
 html.theme-cyberpunk .border-t,
 html.theme-cyberpunk .border-r,
-html.theme-cyberpunk .border-[#e2e8f0],
+html.theme-cyberpunk .border-\[\#e2e8f0\],
 html.theme-cyberpunk .border-slate-100,
 html.theme-cyberpunk .border-slate-200 {
   border-color: #1c1c1c !important;
@@ -618,7 +618,7 @@ html.theme-dracula .text-slate-400 {
 html.theme-dracula .border,
 html.theme-dracula .border-b,
 html.theme-dracula .border-t,
-html.theme-dracula .border-[#e2e8f0],
+html.theme-dracula .border-\[\#e2e8f0\],
 html.theme-dracula .border-slate-100,
 html.theme-dracula .border-slate-200 {
   border-color: #281d45 !important;
@@ -736,7 +736,7 @@ html.theme-lightdark .text-slate-400 {
 html.theme-lightdark .border,
 html.theme-lightdark .border-b,
 html.theme-lightdark .border-t,
-html.theme-lightdark .border-[#e2e8f0],
+html.theme-lightdark .border-\[\#e2e8f0\],
 html.theme-lightdark .border-slate-100,
 html.theme-lightdark .border-slate-200 {
   border-color: #384a66 !important;

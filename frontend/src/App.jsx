@@ -1201,7 +1201,10 @@ export default function App() {
         )}
 
         {isMobileMenuOpen && (
-          <div className="fixed inset-0 z-50 lg:hidden">
+          <motion.div
+            key="mobile-drawer-wrapper"
+            className="fixed inset-0 z-50 lg:hidden"
+          >
             {/* Dark Backdrop overlay */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -1300,7 +1303,7 @@ export default function App() {
                     setActiveTab('profile');
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`bg-slate-50 dark:bg-slate-900/60 p-3 rounded-lg border text-xs hover:border-blue-400 dark:hover:border-blue-600 cursor-pointer active:scale-[0.98] transition-all select-none group/profile font-sans ${activeTab === 'profile' ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-slate-250 dark:border-slate-800'}`}
+                  className={`bg-slate-50 dark:bg-slate-900/60 p-3 rounded-lg border text-xs hover:border-blue-400 dark:hover:border-blue-600 cursor-pointer active:scale-[0.98] transition-all select-none group/profile font-sans ${activeTab === 'profile' ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-slate-200 dark:border-slate-800'}`}
                   title="Click to view full user profile details"
                   id="mobile-profile-card-click"
                 >
@@ -1345,7 +1348,7 @@ export default function App() {
                 </div>
               </div>
             </motion.div>
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -1543,7 +1546,7 @@ export default function App() {
             </div>
           </div>
           {/* Time & Quick Switch Link for smaller screens */}
-          <div className="flex flex-wrap items-center justify-between md:justify-end gap-3 sm:gap-4 text-xs font-bold w-full md:w-auto">
+          <div className="flex flex-wrap items-center justify-between md:justify-end gap-3 sm:gap-4 text-xs font-bold w-full md:w-auto relative">
             {currentTime && (
               <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-500 font-mono font-bold shrink-0">
                 <Clock className="w-3.5 h-3.5" />
@@ -1551,8 +1554,9 @@ export default function App() {
               </div>
             )}
 
-            {/* Notification Centre Toggle Button & Popover */}
-            <div className="relative shrink-0" id="notification-centre-container">
+            <div className="flex items-center gap-2 sm:gap-3.5 shrink-0" id="header-actions-group">
+              {/* Notification Centre Toggle Button & Popover */}
+              <div className="sm:relative shrink-0" id="notification-centre-container">
               <button
                 onClick={() => {
                   setIsNotificationCentreOpen(prev => !prev);
@@ -1583,7 +1587,7 @@ export default function App() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl shadow-2xl py-2.5 z-50 overflow-hidden"
+                      className="absolute left-0 right-0 sm:left-auto sm:right-0 mx-auto sm:mx-0 mt-2 w-auto sm:w-96 max-w-sm sm:max-w-none bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl shadow-2xl py-2.5 z-50 overflow-hidden"
                       id="notification-centre-dropdown"
                     >
                       {/* Header block */}
@@ -1753,12 +1757,13 @@ export default function App() {
               </AnimatePresence>
             </div>
 
-            <button
-              onClick={() => setIsAddModalOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 cursor-pointer shrink-0"
-            >
-              <Plus className="w-3.5 h-3.5" /> Add Device
-            </button>
+              <button
+                onClick={() => setIsAddModalOpen(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 cursor-pointer shrink-0"
+              >
+                <Plus className="w-3.5 h-3.5" /> Add Device
+              </button>
+            </div>
           </div>
         </header>
 

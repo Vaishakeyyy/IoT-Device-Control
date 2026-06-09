@@ -1,6 +1,6 @@
 import express from 'express';
 import path from 'path';
-import { createServer as createViteServer } from 'vite';
+// Vite import removed for separate frontend configuration
 import { db } from './db.js';
 
 async function startServer() {
@@ -300,16 +300,10 @@ async function startServer() {
   // VITE DEVELOPMENT OR STATIC ASSETS ROUTING
   // ==========================================
   
-  if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
+  if (process.env.NODE_ENV === 'production') {
+    const distPath = path.join(process.cwd(), '../frontend/dist');
     app.use(express.static(distPath));
-    app.get('*all', (req, res) => {
+    app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
