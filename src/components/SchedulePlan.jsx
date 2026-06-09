@@ -218,7 +218,9 @@ export const SchedulePlan = ({
             <motion.div
               layout
               key={rule.id}
-              className={`flex items-start justify-between p-3 rounded-lg border transition-all duration-150 ${
+              whileHover={{ scale: 1.01, zIndex: 20, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)" }}
+              transition={{ type: "tween", duration: 0.25 }}
+              className={`relative isolate flex items-start justify-between p-3 rounded-lg border transition-all duration-150 ${
                 rule.isEnabled 
                   ? 'bg-slate-50 border-slate-200 text-slate-800' 
                   : 'bg-slate-50/50 border-slate-200/50 opacity-45 text-slate-400'

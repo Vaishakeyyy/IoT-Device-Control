@@ -42,7 +42,7 @@ export const TelemetryChart = ({ data = energyMockHistory }) => {
           </div>
 
           {/* Toggle buttons */}
-          <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg border border-slate-205 border-slate-200">
+          <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
             <button
               onClick={() => setViewMode('stack')}
               className={`px-2.5 py-1 rounded text-[11px] font-sans font-bold transition-colors cursor-pointer ${
@@ -75,7 +75,7 @@ export const TelemetryChart = ({ data = energyMockHistory }) => {
             <span className="text-sm font-sans font-extrabold text-slate-800 leading-none block mt-1">
               {peakDraw} W
             </span>
-            <span className="text-[9px] text-slate-450 font-sans block mt-1 leading-none">
+            <span className="text-[9px] text-slate-500 font-sans block mt-1 leading-none">
               Registered at {peakTime}
             </span>
           </div>
@@ -97,7 +97,7 @@ export const TelemetryChart = ({ data = energyMockHistory }) => {
             <span className="text-sm font-sans font-extrabold text-slate-800 leading-none block mt-1">
               ~{dailyCarbonEst.toFixed(1)} lbs
             </span>
-            <span className="text-[9px] text-slate-450 font-sans block mt-1 leading-none">
+            <span className="text-[9px] text-slate-500 font-sans block mt-1 leading-none">
               CO₂ eq per 24 hr cycles
             </span>
           </div>
@@ -194,7 +194,7 @@ export const TelemetryChart = ({ data = energyMockHistory }) => {
 
       <div className="mt-4 flex items-start gap-2 bg-blue-50/50 p-3 rounded-lg border border-blue-100">
         <Info className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
-        <p className="text-[11px] font-sans text-slate-655 leading-normal text-slate-500">
+        <p className="text-[11px] font-sans text-slate-500 leading-normal">
           <strong>Grid Advice:</strong> Peak drawing occurs between <strong>6 PM – 9 PM</strong>. Enabling eco-timers or staggering automated sweeps during this time could reduce weekly energy costs by up to <strong>22%</strong>.
         </p>
       </div>

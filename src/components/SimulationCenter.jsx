@@ -53,7 +53,7 @@ export const SimulationCenter = ({
             <h4 className="text-[11px] font-bold font-sans text-indigo-700 uppercase tracking-wide">
               Eco Night Safety Lockdown
             </h4>
-            <p className="text-[10px] text-slate-505 text-slate-500 font-sans mt-0.5 leading-tight">
+            <p className="text-[10px] text-slate-500 font-sans mt-0.5 leading-tight">
               Secures locks, turns off all illuminating light channels, and drops thermostat load targets to cool save point.
             </p>
           </div>
@@ -72,7 +72,7 @@ export const SimulationCenter = ({
             <h4 className="text-[11px] font-bold font-sans text-orange-700 uppercase tracking-wide">
               Climatic Heatwave Sweep
             </h4>
-            <p className="text-[10px] text-slate-550 text-slate-500 font-sans mt-0.5 leading-tight">
+            <p className="text-[10px] text-slate-500 font-sans mt-0.5 leading-tight">
               Spikes outdoor summer thermals, triggering localized HVAC refrigerant drawing cycle and power demand load heights.
             </p>
           </div>
@@ -91,7 +91,7 @@ export const SimulationCenter = ({
             <h4 className="text-[11px] font-bold font-sans text-sky-700 uppercase tracking-wide">
               Cabinet Leak Detection
             </h4>
-            <p className="text-[10px] text-slate-505 text-slate-500 font-sans mt-0.5 leading-tight">
+            <p className="text-[10px] text-slate-500 font-sans mt-0.5 leading-tight">
               Fires moisture warning alert in Kitchen, triggering garden water valve de-pressurization to mitigate flood damage.
             </p>
           </div>

@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Outfit", "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
@@ -33,7 +33,26 @@
 }
 
 /* ==========================================================================
-   AUTHENTIC DARK THEME STYLING OVERRIDES (SYNAPSE MODERN COSMIC)
+   SNAPPY HAPTIC TAP & SUBTLE HOVER SCALE EFFECTS FOR ALL INTERACTIVE BUTTONS
+   ========================================================================== */
+button:not([disabled]),
+input[type="submit"]:not([disabled]) {
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), background-color 200ms, border-color 200ms, box-shadow 200ms;
+}
+
+button:not([disabled]):hover,
+input[type="submit"]:not([disabled]):hover {
+  transform: scale(1.025) translateY(-0.5px);
+  z-index: 30;
+}
+
+button:not([disabled]):active,
+input[type="submit"]:not([disabled]):active {
+  transform: scale(0.97) translateY(0);
+}
+
+/* ==========================================================================
+   AUTHENTIC DARK THEME STYLING OVERRIDES (ROBROS MODERN COSMIC)
    ========================================================================== */
 
 html.dark {
@@ -84,10 +103,7 @@ html.dark .border-t,
 html.dark .border-r,
 html.dark .border-[#e2e8f0],
 html.dark .border-slate-100,
-html.dark .border-slate-200,
-html.dark .border-slate-250,
-html.dark .border-slate-205,
-html.dark .border-slate-202 {
+html.dark .border-slate-200 {
   border-color: #1e293b !important; /* sleek thin borderline */
 }
 
@@ -378,6 +394,12 @@ html.theme-nordic .border-blue-500 {
 
 html.theme-nordic .text-slate-800,
 html.theme-nordic .text-slate-900,
+html.theme-nordic .text-slate-850,
+html.theme-nordic .text-slate-700,
+html.theme-nordic .text-slate-705,
+html.theme-nordic .text-slate-650,
+html.theme-nordic .text-slate-655,
+html.theme-nordic .text-slate-805,
 html.theme-nordic h1,
 html.theme-nordic h2,
 html.theme-nordic h3 {
@@ -426,6 +448,12 @@ html.theme-cyberpunk .bg-\[\#f8fafc\] {
 /* Retro glowing text */
 html.theme-cyberpunk .text-slate-800,
 html.theme-cyberpunk .text-slate-900,
+html.theme-cyberpunk .text-slate-850,
+html.theme-cyberpunk .text-slate-700,
+html.theme-cyberpunk .text-slate-705,
+html.theme-cyberpunk .text-slate-650,
+html.theme-cyberpunk .text-slate-655,
+html.theme-cyberpunk .text-slate-805,
 html.theme-cyberpunk h1,
 html.theme-cyberpunk h2,
 html.theme-cyberpunk h3,
@@ -561,6 +589,12 @@ html.theme-dracula .border-blue-500 {
 
 html.theme-dracula .text-slate-800,
 html.theme-dracula .text-slate-900,
+html.theme-dracula .text-slate-850,
+html.theme-dracula .text-slate-700,
+html.theme-dracula .text-slate-705,
+html.theme-dracula .text-slate-650,
+html.theme-dracula .text-slate-655,
+html.theme-dracula .text-slate-805,
 html.theme-dracula h1,
 html.theme-dracula h2,
 html.theme-dracula h3,
@@ -674,6 +708,12 @@ html.theme-lightdark .border-blue-500 {
 
 html.theme-lightdark .text-slate-800,
 html.theme-lightdark .text-slate-900,
+html.theme-lightdark .text-slate-850,
+html.theme-lightdark .text-slate-700,
+html.theme-lightdark .text-slate-705,
+html.theme-lightdark .text-slate-650,
+html.theme-lightdark .text-slate-655,
+html.theme-lightdark .text-slate-805,
 html.theme-lightdark h1,
 html.theme-lightdark h2,
 html.theme-lightdark h3,

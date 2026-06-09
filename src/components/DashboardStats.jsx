@@ -68,7 +68,7 @@ export const DashboardStats = ({ devices, rules, commandsCount = 0, alertsCount 
       id: 'stat-rebooting',
       label: 'REBOOTING',
       value: '0',
-      sub: 'Console runtime resets',
+      sub: 'System runtime resets',
       borderColor: 'border-t-2 border-t-teal-400',
     },
     {
@@ -81,14 +81,15 @@ export const DashboardStats = ({ devices, rules, commandsCount = 0, alertsCount 
   ];
 
   return (
-    <div className="flex xl:grid xl:grid-cols-10 gap-2 overflow-x-auto pb-2 scrollbar-none" id="dashboard-stats-grid">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-10 gap-2 w-full py-1" id="dashboard-stats-grid">
       {stats.map((stat, idx) => (
         <motion.div
           key={stat.id}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25, delay: idx * 0.02 }}
-          className={`flex-1 min-w-[120px] xl:min-w-0 bg-white border border-[#e2e8f0] rounded-md p-2.5 shadow-xs hover:shadow-sm hover:border-slate-350 transition-all duration-200 flex flex-col justify-between ${stat.borderColor}`}
+          whileHover={{ y: -1, scale: 1.01, zIndex: 20, boxShadow: "0 4px 6px -1px rgba(0,0,0,0.03)" }}
+          transition={{ type: "tween", duration: 0.25, delay: idx * 0.01 }}
+          className={`relative isolate bg-white border border-[#e2e8f0] rounded-md p-2.5 shadow-xs hover:border-slate-350 transition-all duration-200 flex flex-col justify-between ${stat.borderColor}`}
         >
           <div className="space-y-0.5">
             <span className="text-[9px] font-bold font-mono tracking-wider text-slate-400 block whitespace-nowrap">

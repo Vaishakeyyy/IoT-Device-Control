@@ -13,7 +13,7 @@ export const ActivityLogViewer = ({ logs, onClearLogs }) => {
       case 'info':
         return 'text-blue-700 bg-blue-50 border-blue-200';
       default:
-        return 'text-slate-600 bg-slate-100 border-slate-250';
+        return 'text-slate-600 bg-slate-100 border-slate-200';
     }
   };
 
@@ -33,7 +33,7 @@ export const ActivityLogViewer = ({ logs, onClearLogs }) => {
   };
 
   return (
-    <div className="bg-white border border-[#e2e8f0] text-slate-805 rounded-xl p-5 shadow-xs h-full animate-fade-in" id="log-viewer-pane">
+    <div className="bg-white border border-[#e2e8f0] text-slate-800 rounded-xl p-5 shadow-xs h-full animate-fade-in" id="log-viewer-pane">
       <div className="flex items-center justify-between pb-4 border-b border-slate-100">
         <div>
           <h3 className="font-sans font-bold text-slate-800 text-sm flex items-center gap-1.5">
@@ -47,7 +47,7 @@ export const ActivityLogViewer = ({ logs, onClearLogs }) => {
         {logs.length > 0 && (
           <button
             onClick={onClearLogs}
-            className="text-[11px] font-sans font-bold text-slate-450 hover:text-red-650 hover:text-red-600 cursor-pointer transition-colors"
+            className="text-[11px] font-sans font-bold text-slate-500 hover:text-red-650 hover:text-red-600 cursor-pointer transition-colors"
           >
             Clear Log Terminal
           </button>
@@ -63,7 +63,7 @@ export const ActivityLogViewer = ({ logs, onClearLogs }) => {
           logs.map((log) => (
             <div
               key={log.id}
-              className="p-3 bg-slate-50 border border-slate-205 border-slate-205 border-slate-200 rounded-lg font-mono text-[11px] flex flex-col sm:flex-row items-start justify-between gap-2 hover:border-slate-350 transition-colors"
+              className="p-3 bg-slate-50 border border-slate-200 rounded-lg font-mono text-[11px] flex flex-col sm:flex-row items-start justify-between gap-2 hover:border-slate-300 transition-colors"
             >
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-1.5 leading-none">

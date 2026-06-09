@@ -98,9 +98,11 @@ export const DeviceCard = ({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.2 }}
-      className={`relative flex flex-col justify-between bg-white border rounded-xl p-4 shadow-xs hover:shadow-md hover:border-slate-350 transition-all duration-200 ${
-        device.isOn ? 'border-[#e2e8f0]' : 'bg-slate-50/70 border-slate-200/80 opacity-90'
+      whileHover={{ y: -2, scale: 1.01, zIndex: 20, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02)" }}
+      whileTap={{ scale: 0.99 }}
+      transition={{ type: "tween", duration: 0.25 }}
+      className={`relative isolate flex flex-col justify-between bg-white border rounded-xl p-4 shadow-xs transition-all duration-200 ${
+        device.isOn ? 'border-slate-200' : 'bg-slate-50/70 border-slate-200/80 opacity-90'
       }`}
       id={`device-card-${device.id}`}
     >
@@ -120,17 +122,24 @@ export const DeviceCard = ({
               <h3 className="font-sans font-bold text-slate-800 leading-tight truncate text-sm">
                 {device.name}
               </h3>
-              <p className="text-[11px] text-slate-500 font-sans mt-0.5 flex items-center gap-1">
-                <span className={`inline-block w-1.5 h-1.5 rounded-full ${device.isOn ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`}></span>
-                {device.room}
-              </p>
+              <div className="text-[11px] text-slate-500 font-sans mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                <span className="flex items-center gap-1">
+                  <span className={`inline-block w-1.5 h-1.5 rounded-full ${device.isOn ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`}></span>
+                  {device.room}
+                </span>
+                {device.wifi_ip && (
+                  <span className="text-[10px] font-mono text-blue-600 bg-blue-50/70 border border-blue-100 rounded px-1 py-0.2 leading-normal shrink-0">
+                    {device.wifi_ip}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
             <button
               onClick={() => onToggle(device.id)}
-              className={`p-1.5 rounded-lg border transition-all duration-150 cursor-pointer ${
+              className={`p-1.5 rounded-lg border transition-all duration-150 active:scale-90 cursor-pointer ${
                 device.isOn
                   ? 'bg-slate-900 text-white border-slate-900 hover:bg-slate-800'
                   : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
@@ -142,7 +151,7 @@ export const DeviceCard = ({
             </button>
             <button
               onClick={() => onDelete(device.id)}
-              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-transparent rounded-lg transition-all cursor-pointer"
+              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-transparent rounded-lg transition-all active:scale-90 cursor-pointer"
               title="Delete Device"
               id={`delete-btn-${device.id}`}
             >
@@ -196,7 +205,7 @@ export const DeviceCard = ({
                     <button
                       key={level}
                       onClick={() => onValueChange(device.id, level)}
-                      className={`text-[9px] px-1.5 py-0.5 rounded font-sans transition-all border cursor-pointer ${
+                      className={`text-[9px] px-1.5 py-0.5 rounded font-sans transition-all active:scale-[0.95] border cursor-pointer ${
                         device.value === level
                           ? 'bg-amber-100 text-amber-800 border-amber-200 font-bold'
                           : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
@@ -229,7 +238,7 @@ export const DeviceCard = ({
                     <button
                       key={temp}
                       onClick={() => onValueChange(device.id, temp)}
-                      className={`text-[9px] px-1.5 py-0.5 rounded font-sans transition-all border cursor-pointer ${
+                      className={`text-[9px] px-1.5 py-0.5 rounded font-sans transition-all active:scale-[0.95] border cursor-pointer ${
                         device.value === temp
                           ? 'bg-orange-100 text-orange-800 border-orange-200 font-bold'
                           : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
@@ -307,7 +316,7 @@ export const DeviceCard = ({
                   <span className="text-emerald-600 font-bold font-sans">Strong (98%)</span>
                 </div>
                 <div className="bg-slate-100 rounded-lg p-2.5 flex items-center justify-center border border-slate-200 mt-1 relative overflow-hidden group">
-                  <div className="absolute top-1.5 left-1.5 bg-rose-550 text-[8px] text-rose-600 border border-rose-200 font-mono px-1 rounded-sm animate-pulse flex items-center gap-0.5 font-bold uppercase">
+                  <div className="absolute top-1.5 left-1.5 bg-rose-50 text-[8px] text-rose-600 border border-rose-200 font-mono px-1 rounded-sm animate-pulse flex items-center gap-0.5 font-bold uppercase">
                     <span className="w-1 h-1 rounded-full bg-rose-600 inline-block"></span>
                     Live Feed
                   </div>
@@ -319,7 +328,7 @@ export const DeviceCard = ({
             {device.type === 'lock' && (
               <div className="flex items-center justify-between bg-slate-50 rounded-lg p-2 border border-slate-200">
                 <span className="text-[11px] font-sans text-slate-500">Lock Mechanism</span>
-                <span className="text-[9px] uppercase font-mono px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-250">
+                <span className="text-[9px] uppercase font-mono px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
                   Armed & Locked
                 </span>
               </div>
@@ -327,7 +336,7 @@ export const DeviceCard = ({
           </div>
         ) : (
           <div className="text-center py-1.5 bg-slate-50 rounded-lg border border-dashed border-slate-200/80">
-            <span className="text-xs text-slate-450 font-sans italic">
+            <span className="text-xs text-slate-500 font-sans italic">
               Node is currently offline / suspended
             </span>
           </div>

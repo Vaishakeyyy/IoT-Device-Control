@@ -13,6 +13,8 @@ export const AddDeviceModal = ({
   const [room, setRoom] = useState(ROOMS[1]); // Default to first proper room 'Living Room'
   const [initialValue, setInitialValue] = useState(50);
   const [energyUsage, setEnergyUsage] = useState(15);
+  const [wifiIp, setWifiIp] = useState('192.168.1.145');
+  const [error, setError] = useState('');
 
   if (!isOpen) return null;
 
@@ -59,6 +61,21 @@ export const AddDeviceModal = ({
     e.preventDefault();
     if (!name.trim()) return;
 
+    // Validate that the device is on the same WiFi / subnet as the Console (192.168.1.x)
+    const cleanedIp = wifiIp.trim();
+    if (!cleanedIp.startsWith('192.168.1.')) {
+      setError("Network Connection Denied: Device must be connected to the same WiFi network ('Mesh_Gateway_Home' on subnet 192.168.1.x) as this Web Dashboard console.");
+      return;
+    }
+
+    // Ensure it is not the gateway IP itself (192.168.1.1)
+    if (cleanedIp === '192.168.1.1' || cleanedIp === '192.168.1.0' || cleanedIp === '192.168.1.255') {
+      setError("Network Error: Reserved IP address. Please assign a valid device client IP (e.g. 192.168.1.2 to 102.168.1.254).");
+      return;
+    }
+
+    setError('');
+
     onAddDevice({
       name,
       type,
@@ -79,6 +96,7 @@ export const AddDeviceModal = ({
           : 'W',
       energyUsage,
       status: 'online',
+      wifi_ip: cleanedIp,
     });
 
     // Reset fields
@@ -87,6 +105,8 @@ export const AddDeviceModal = ({
     setRoom(ROOMS[1]);
     setEnergyUsage(12);
     setInitialValue(80);
+    setWifiIp('192.168.1.145');
+    setError('');
     onClose();
   };
 
@@ -124,6 +144,34 @@ export const AddDeviceModal = ({
         </div>
 
         <form onSubmit={handleSubmit} className="p-5 space-y-4" id="form-device-create text-xs">
+          {/* Error Alert Display */}
+          {error && (
+            <div className="p-3 bg-rose-50 border border-rose-100 text-rose-700 text-xs rounded-lg font-sans font-medium flex flex-col gap-1">
+              <span className="font-extrabold text-[10px] uppercase tracking-wider text-rose-850">Network Validation Denied:</span>
+              <p>{error}</p>
+            </div>
+          )}
+
+          {/* Web Console network indicator block */}
+          <div className="bg-slate-50 border border-slate-200/60 rounded-lg p-2.5 flex items-center justify-between text-xs font-sans">
+            <div>
+              <span className="text-[9px] font-bold text-slate-400 uppercase block tracking-wider leading-none mb-1">
+                Active Console Network (This Page)
+              </span>
+              <span className="font-semibold text-slate-700 block">
+                SSID: <span className="font-bold text-blue-600">Mesh_Gateway_Home</span>
+              </span>
+            </div>
+            <div className="text-right">
+              <span className="text-[9px] font-bold text-slate-400 uppercase block tracking-wider leading-none mb-1">
+                Required Subnet
+              </span>
+              <span className="font-mono text-[11px] font-bold text-slate-600 bg-slate-200/60 px-1.5 py-0.5 rounded leading-none">
+                192.168.1.x
+              </span>
+            </div>
+          </div>
+
           {/* Device name */}
           <div>
             <label className="block text-[10px] font-bold font-sans text-slate-600 mb-1.5 uppercase tracking-wider">
@@ -137,6 +185,29 @@ export const AddDeviceModal = ({
               className="w-full text-xs font-sans px-3 py-2 bg-slate-50 border border-slate-200 text-slate-800 rounded-lg focus:ring-1 focus:ring-blue-500 focus:outline-none placeholder-slate-400"
               required
               maxLength={40}
+            />
+          </div>
+
+          {/* WiFi IP Address */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-[10px] font-bold font-sans text-slate-600 uppercase tracking-wider">
+                Network WiFi IP Address
+              </label>
+              <span className="text-[8px] font-mono text-slate-400">Must start with 192.168.1.</span>
+            </div>
+            <input
+              type="text"
+              placeholder="e.g. 192.168.1.145"
+              value={wifiIp}
+              onChange={(e) => {
+                setWifiIp(e.target.value);
+                if (error) setError('');
+              }}
+              className="w-full text-xs font-mono px-3 py-2 bg-slate-50 border border-slate-200 text-slate-800 rounded-lg focus:ring-1 focus:ring-blue-500 focus:outline-none placeholder-slate-400"
+              required
+              pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+              title="Please enter a valid IPv4 address (e.g. 192.168.1.145)"
             />
           </div>
 
