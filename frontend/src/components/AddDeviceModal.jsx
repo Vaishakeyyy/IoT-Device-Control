@@ -48,8 +48,8 @@ export const AddDeviceModal = ({
   const [error, setError] = useState('');
   
   // Real-time subnet states
-  const [activeSsid, setActiveSsid] = useState('Mesh_Gateway_Home');
-  const [discoveryMode, setDiscoveryMode] = useState('ap'); // 'ap' or 'subnet'
+  const [activeSsid, setActiveSsid] = useState('Detecting network...');
+  const [discoveryMode, setDiscoveryMode] = useState('subnet'); // 'ap' or 'subnet'
   const [discoveredDevices, setDiscoveredDevices] = useState([]);
   const [scannedSubnets, setScannedSubnets] = useState([]);
   const [selectedSubnetBase, setSelectedSubnetBase] = useState('');
@@ -104,7 +104,11 @@ export const AddDeviceModal = ({
         }, 1800);
       } else {
         fetch('/api/wifi/discover-devices')
-          .then((res) => res.json())
+          .then(async (res) => {
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Network discovery failed.');
+            return data;
+          })
           .then((data) => {
             const subnetsList = data.subnets || [];
             const devicesList = data.devices || [];
@@ -122,22 +126,11 @@ export const AddDeviceModal = ({
             setIsScanning(false);
           })
           .catch((err) => {
-            console.error('Discovery error, showing fallbacks', err);
-            // Graceful fallback mocks
-            const fallbacks = {
-              subnets: [
-                { interfaceName: 'WiFi', subnetBase: '10.150.251', hostIp: '10.150.251.18' },
-                { interfaceName: 'Local Area Connection* 2', subnetBase: '192.168.137', hostIp: '192.168.137.1' }
-              ],
-              devices: [
-                { ip: '192.168.137.246', mac: 'E8-B0-C5-27-8A-80', isGateway: false, type: 'light', label: 'Hotspot Client Device (light)', subnetBase: '192.168.137', isMdns: true },
-                { ip: '10.150.251.1', mac: 'C0-42-D0-A5-46-E0', isGateway: true, type: 'smart-plug', label: 'Default Gateway Router', subnetBase: '10.150.251', isMdns: false },
-                { ip: '10.150.251.25', mac: '9C-8E-CD-12-88-A4', isGateway: false, type: 'speaker', label: 'Living Room Smart Speaker', subnetBase: '10.150.251', isMdns: false },
-              ]
-            };
-            setScannedSubnets(fallbacks.subnets);
-            setDiscoveredDevices(fallbacks.devices);
-            setSelectedSubnetBase('192.168.137');
+            console.error('Discovery error', err);
+            setError(err.message || 'Unable to scan the current Wi-Fi network.');
+            setScannedSubnets([]);
+            setDiscoveredDevices([]);
+            setSelectedSubnetBase('');
             setIsScanning(false);
           });
       }
@@ -234,7 +227,7 @@ export const AddDeviceModal = ({
 
   const handleSelectDiscoveredDevice = (device) => {
     setSelectedDiscoveredDevice(device);
-    setType(device.type);
+    setType(device.type === 'network-device' ? 'smart-plug' : device.type);
     setName(device.label.replace(/ \(.+\)$/, '')); // clean up label suffix
     setAssignedIp(device.ip);
     

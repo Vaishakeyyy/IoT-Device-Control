@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import os from 'os';
+import net from 'net';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import multicastdns from 'multicast-dns';
@@ -8,6 +9,53 @@ import multicastdns from 'multicast-dns';
 import { db, initDb } from './db.js';
 
 const execAsync = promisify(exec);
+
+const activeHttpDevices = new Map<string, number>();
+
+function getClientIp(req: express.Request): string {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded) {
+    const ips = (typeof forwarded === 'string' ? forwarded : forwarded[0]).split(',');
+    return ips[0].trim().replace(/^::ffff:/, '');
+  }
+  const remoteIp = req.ip || req.socket.remoteAddress || '';
+  return remoteIp.replace(/^::ffff:/, '');
+}
+
+async function probeNetworkTarget(ip: string) {
+  const cleanIp = ip.trim();
+  if (net.isIP(cleanIp) !== 4) {
+    throw new Error('A valid IPv4 address is required.');
+  }
+
+  // 1. Check if the device is active via HTTP heartbeat
+  const lastSeen = activeHttpDevices.get(cleanIp);
+  if (lastSeen && Date.now() - lastSeen < 60000) {
+    return { online: true, mac: 'HTTP-HEARTBEAT' };
+  }
+
+  // 2. Fallback to ICMP ping
+  const pingCommand = process.platform === 'win32'
+    ? `ping -n 1 -w 1200 ${cleanIp}`
+    : `ping -c 1 -W 1 ${cleanIp}`;
+
+  try {
+    await execAsync(pingCommand);
+  } catch {
+    return { online: false, mac: 'UNAVAILABLE' };
+  }
+
+  let mac = 'UNAVAILABLE';
+  if (process.platform === 'win32') {
+    try {
+      const { stdout } = await execAsync(`arp -a ${cleanIp}`);
+      const match = stdout.match(/([0-9a-f]{2}(?:-[0-9a-f]{2}){5})/i);
+      if (match) mac = match[1].toUpperCase();
+    } catch {}
+  }
+
+  return { online: true, mac };
+}
 
 interface MdnsDevice {
   ip: string;
@@ -200,9 +248,51 @@ async function startServer() {
   await initDb();
   initMdnsListener();
   const app = express();
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT || 3000);
 
   app.use(express.json());
+
+  // Track client IPs for HTTP Heartbeat device simulation
+  app.use((req, res, next) => {
+    const clientIp = getClientIp(req);
+    if (clientIp) {
+      activeHttpDevices.set(clientIp, Date.now());
+    }
+    next();
+  });
+
+  // Heartbeat signal endpoint for mobile device pairing
+  app.get('/api/wifi/heartbeat', (req, res) => {
+    const clientIp = getClientIp(req);
+    if (clientIp) {
+      activeHttpDevices.set(clientIp, Date.now());
+      return res.json({ success: true, ip: clientIp, lastSeen: Date.now() });
+    }
+    res.status(400).json({ error: 'Could not resolve client IP address.' });
+  });
+
+  // Host access URL info for pairing QR display
+  app.get('/api/wifi/access-info', (req, res) => {
+    const interfaces = os.networkInterfaces();
+    let hostIp = 'localhost';
+    for (const name of Object.keys(interfaces)) {
+      const ifaceList = interfaces[name];
+      if (!ifaceList) continue;
+      for (const iface of ifaceList) {
+        if (iface.family === 'IPv4' && !iface.internal) {
+          hostIp = iface.address;
+          break;
+        }
+      }
+    }
+    res.json({
+      localIp: hostIp,
+      localPort: PORT,
+      appUrl: process.env.APP_URL && process.env.APP_URL !== 'MY_APP_URL'
+        ? process.env.APP_URL
+        : `http://${hostIp}:${PORT}`
+    });
+  });
 
   // Helper to resolve user role
   async function getUserRole(email: string | undefined): Promise<'admin' | 'user'> {
@@ -520,9 +610,9 @@ async function startServer() {
         }
       }
 
-      res.json({ ssid: 'Mesh_Gateway_Home', signal: '100%', connected: false });
+      res.json({ ssid: null, signal: null, connected: false });
     } catch (err) {
-      res.json({ ssid: 'Mesh_Gateway_Home', signal: '100%', connected: false });
+      res.json({ ssid: null, signal: null, connected: false });
     }
   });
 
@@ -547,10 +637,9 @@ async function startServer() {
         }
       }
       
-      // Fallback mocks
-      res.json(['Mesh_Gateway_Home', 'OPPO K13 Turbo 5G', 'Plasma', 'JioAirfiberA6', 'DIRECT-IQLAPTOP']);
+      res.json([]);
     } catch (err) {
-      res.json(['Mesh_Gateway_Home', 'OPPO K13 Turbo 5G', 'Plasma', 'JioAirfiberA6', 'DIRECT-IQLAPTOP']);
+      res.status(503).json({ error: 'Wi-Fi network scanning is unavailable.' });
     }
   });
 
@@ -672,14 +761,9 @@ async function startServer() {
         const subnetBase = subnetMatch ? subnetMatch.subnetBase : '';
         
         // Determine device type
-        let deviceType = 'smart-plug';
+        let deviceType = 'network-device';
         if (mdnsMatch) {
           deviceType = mdnsMatch.type;
-        } else {
-          // Map standard templates based on IP hashing
-          const types = ['smart-plug', 'light', 'camera', 'speaker', 'thermostat', 'lock'];
-          const typeHash = ip.split('.').reduce((acc, val) => acc + parseInt(val), 0);
-          deviceType = types[typeHash % types.length];
         }
 
         // Determine label
@@ -691,8 +775,8 @@ async function startServer() {
           label = isGateway 
             ? `Subnet Gateway Router${interfaceLabel}` 
             : isHotspot 
-              ? `Hotspot Client Device (${deviceType})` 
-              : `Network Host (${deviceType})${interfaceLabel}`;
+              ? 'Hotspot Client Device'
+              : `Network Host${interfaceLabel}`;
               
           if (mac.startsWith('00-0F-AC') || mac.startsWith('52-94-C2')) {
             label = isHotspot ? `Hotspot Client Node` : `Connected Client Node`;
@@ -710,41 +794,72 @@ async function startServer() {
         };
       });
 
-      // Always include gateways for each subnet if they exist
-      for (const { hostIp, subnetBase, interfaceName } of detectedSubnets) {
-        const gatewayIp = `${subnetBase}.1`;
-        if (gatewayIp !== hostIp && !devices.some(d => d.ip === gatewayIp)) {
-          const gatewayMac = arpMap.get(gatewayIp) || 'C0-42-D0-A5-46-E0';
-          devices.unshift({
-            ip: gatewayIp,
-            mac: gatewayMac,
-            isGateway: true,
-            type: 'smart-plug',
-            label: `Default Gateway Router via ${interfaceName}`,
-            subnetBase,
-            isMdns: false
-          });
-        }
-      }
-
       res.json({
         subnets: detectedSubnets,
         devices
       });
     } catch (err: any) {
-      console.warn('[Discovery Engine] Scan error, returning mocks:', err.message);
-      // Fallback mocks
-      res.json({
-        subnets: [
-          { interfaceName: 'WiFi', subnetBase: '10.150.251', hostIp: '10.150.251.18' },
-          { interfaceName: 'Local Area Connection* 2', subnetBase: '192.168.137', hostIp: '192.168.137.1' }
-        ],
-        devices: [
-          { ip: '192.168.137.246', mac: 'E8-B0-C5-27-8A-80', isGateway: false, type: 'light', label: 'Hotspot Smart Light (mDNS Broadcast)', subnetBase: '192.168.137', isMdns: true },
-          { ip: '10.150.251.1', mac: 'C0-42-D0-A5-46-E0', isGateway: true, type: 'smart-plug', label: 'Default Gateway Router via WiFi', subnetBase: '10.150.251', isMdns: false },
-          { ip: '10.150.251.25', mac: '9C-8E-CD-12-88-A4', isGateway: false, type: 'speaker', label: 'Living Room Smart Speaker via WiFi', subnetBase: '10.150.251', isMdns: false },
-        ]
+      console.warn('[Discovery Engine] Scan error:', err.message);
+      res.status(503).json({
+        error: err.message || 'Local network discovery failed.',
+        subnets: [],
+        devices: []
       });
+    }
+  });
+
+  // 4. Persist and monitor explicitly-addressed devices outside the local /24.
+  app.get('/api/wifi/targets', async (req, res) => {
+    try {
+      const targets = await db.query<{ id: number; ip: string; name: string }>(
+        'SELECT id, ip, name FROM network_targets ORDER BY id DESC'
+      );
+      const results = await Promise.all(targets.map(async (target) => ({
+        ...target,
+        ...(await probeNetworkTarget(target.ip)),
+        type: 'network-device',
+        label: target.name,
+        isDirect: true,
+        isGateway: false,
+        isMdns: false,
+      })));
+      res.json(results);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message || 'Failed to load direct network targets.' });
+    }
+  });
+
+  app.post('/api/wifi/targets', async (req, res) => {
+    const ip = String(req.body?.ip || '').trim();
+    const name = String(req.body?.name || 'My phone').trim();
+
+    if (net.isIP(ip) !== 4) {
+      return res.status(400).json({ error: 'Enter a valid IPv4 address.' });
+    }
+
+    try {
+      const probe = await probeNetworkTarget(ip);
+      if (!probe.online) {
+        console.warn(`[Target Registration] IP ${ip} is not pingable, registering offline/unreachable target for HTTP-heartbeat/testing.`);
+      }
+
+      await db.execute(
+        `INSERT INTO network_targets (ip, name) VALUES (?, ?)
+         ON DUPLICATE KEY UPDATE name = VALUES(name)`,
+        [ip, name || 'My phone']
+      );
+      res.status(201).json({ ip, name: name || 'My phone', ...probe });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message || 'Failed to connect network target.' });
+    }
+  });
+
+  app.delete('/api/wifi/targets/:id', async (req, res) => {
+    try {
+      await db.execute('DELETE FROM network_targets WHERE id = ?', [req.params.id]);
+      res.json({ success: true });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message || 'Failed to remove network target.' });
     }
   });
 
@@ -752,6 +867,113 @@ async function startServer() {
   // VITE DEVELOPMENT OR STATIC ASSETS ROUTING
   // ==========================================
   
+  app.get('/', (req, res) => {
+    if (process.env.NODE_ENV !== 'production') {
+      const clientIp = getClientIp(req);
+      if (clientIp) {
+        activeHttpDevices.set(clientIp, Date.now());
+      }
+      return res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>IoT Device Control - Mobile Registered</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <style>
+            body {
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+              background: linear-gradient(135deg, #0f172a, #1e293b);
+              color: #f8fafc;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              min-height: 100vh;
+              margin: 0;
+              padding: 20px;
+              box-sizing: border-box;
+              text-align: center;
+            }
+            .card {
+              background: rgba(30, 41, 59, 0.7);
+              backdrop-filter: blur(10px);
+              border: 1px solid rgba(255, 255, 255, 0.1);
+              padding: 2.5rem;
+              border-radius: 20px;
+              max-width: 400px;
+              box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            }
+            .icon {
+              width: 64px;
+              height: 64px;
+              background: rgba(16, 185, 129, 0.1);
+              border: 2px solid #10b981;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin: 0 auto 1.5rem;
+              color: #10b981;
+              font-size: 2rem;
+              animation: pulse 2s infinite;
+            }
+            h1 {
+              font-size: 1.5rem;
+              margin-bottom: 0.5rem;
+              font-weight: 700;
+            }
+            p {
+              font-size: 0.95rem;
+              color: #94a3b8;
+              line-height: 1.5;
+            }
+            .ip {
+              font-family: monospace;
+              background: #0f172a;
+              padding: 4px 8px;
+              border-radius: 4px;
+              color: #38bdf8;
+              font-size: 0.9rem;
+            }
+            .btn {
+              display: inline-block;
+              margin-top: 1.5rem;
+              background: #2563eb;
+              color: white;
+              text-decoration: none;
+              padding: 10px 20px;
+              border-radius: 8px;
+              font-size: 0.9rem;
+              font-weight: 600;
+              transition: background 0.2s;
+            }
+            .btn:hover {
+              background: #1d4ed8;
+            }
+            @keyframes pulse {
+              0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+              70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+              100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <div class="icon">✓</div>
+            <h1>Device Paired Successfully</h1>
+            <p>Your mobile phone has connected to the IoT system.</p>
+            <p>Detected IP address: <span class="ip">${clientIp}</span></p>
+            <a href="http://${req.hostname}:5173" class="btn">Open Full Dashboard</a>
+            <p style="margin-top: 1.5rem; font-size: 0.75rem; color: #64748b;">(Note: Opening the dashboard requires the Vite host configuration to be active on the same Wi-Fi network.)</p>
+          </div>
+        </body>
+        </html>
+      `);
+    }
+    const distPath = path.join(process.cwd(), '../frontend/dist');
+    app.use(express.static(distPath));
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+
   if (process.env.NODE_ENV === 'production') {
     const distPath = path.join(process.cwd(), '../frontend/dist');
     app.use(express.static(distPath));

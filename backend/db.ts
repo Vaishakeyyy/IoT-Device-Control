@@ -101,6 +101,15 @@ export async function initDb() {
   `);
 
   await pool.query(`
+    CREATE TABLE IF NOT EXISTS network_targets (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      ip VARCHAR(45) UNIQUE NOT NULL,
+      name VARCHAR(255) NOT NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS logs (
       id INT PRIMARY KEY AUTO_INCREMENT,
       timestamp VARCHAR(100) NOT NULL,

@@ -35,30 +35,6 @@ export const LoginPage = ({ onLogin }) => {
     }
   };
 
-  const handleShortcutLogin = async (presetEmail, role) => {
-    setEmail(presetEmail);
-    const presetPassword = role === 'admin' ? 'admin123' : 'user456';
-    setPassword(presetPassword);
-    setError(null);
-
-    try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: presetEmail, password: presetPassword }),
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Authentication failed.');
-      }
-
-      onLogin(data.email, data.role);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans" id="auth-panel-stage">
       <div className="absolute inset-0 bg-[#f1f5f9] dark:bg-[#0c0714] bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-40 animate-pulse" />
@@ -106,7 +82,7 @@ export const LoginPage = ({ onLogin }) => {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. vaishakh884"
+                  placeholder="e.g. operator@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full text-xs pl-9 pr-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-400"
@@ -146,48 +122,6 @@ export const LoginPage = ({ onLogin }) => {
             </button>
           </form>
 
-          <div className="mt-6 border-t border-slate-100 dark:border-slate-800 pt-5 space-y-3">
-            <span className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider text-center">
-              Sign In Instantly via SQL preset
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => handleShortcutLogin('vaishakh884@gmail.com', 'user')}
-                className="flex items-center gap-2 p-2.5 bg-slate-50 dark:bg-slate-950 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 border border-slate-200 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-900 rounded-lg text-left transition-all active:scale-[0.97] cursor-pointer group"
-              >
-                <div className="p-1 bg-emerald-100 text-emerald-800 rounded text-[9px] font-bold uppercase shrink-0">
-                  User
-                </div>
-                <div className="min-w-0">
-                  <div className="text-[11px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 truncate">
-                    vaishakh884
-                  </div>
-                  <div className="text-[9px] text-slate-500 truncate leading-none mt-0.5">
-                    Operator profile (user456)
-                  </div>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleShortcutLogin('admin@robros.io', 'admin')}
-                className="flex items-center gap-2 p-2.5 bg-slate-50 dark:bg-slate-950 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 border border-slate-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-900 rounded-lg text-left transition-all active:scale-[0.97] cursor-pointer group"
-              >
-                <div className="p-1 bg-indigo-100 text-indigo-800 rounded text-[9px] font-bold uppercase shrink-0">
-                  Admin
-                </div>
-                <div className="min-w-0">
-                  <div className="text-[11px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-700 dark:group-hover:text-indigo-400 truncate">
-                    admin@robros.io
-                  </div>
-                  <div className="text-[9px] text-slate-500 truncate leading-none mt-0.5">
-                    Root admin profile (admin123)
-                  </div>
-                </div>
-              </button>
-            </div>
-          </div>
         </div>
       </motion.div>
     </div>

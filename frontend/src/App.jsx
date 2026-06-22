@@ -14,6 +14,7 @@ import { AddDeviceModal } from './components/AddDeviceModal';
 import { ActivityLogViewer } from './components/ActivityLogViewer';
 import { SimulationCenter } from './components/SimulationCenter';
 import { LoginPage } from './components/LoginPage';
+import { WifiDiscoveryPanel } from './components/WifiDiscoveryPanel';
 import {
   LayoutDashboard,
   Cpu,
@@ -1803,24 +1804,7 @@ export default function App() {
                   criticalAlertsCount={criticalAlertsCount}
                 />
 
-                {/* Local Network Address strip */}
-                <div className="bg-white border border-[#e2e8f0] p-2.5 rounded-md flex flex-wrap items-center justify-between gap-2 text-[11px] font-sans text-slate-500 font-bold hover:shadow-xs transition-shadow">
-                  <span className="flex flex-wrap items-center gap-2">
-                    <span className="relative flex h-2 w-2 shrink-0">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                    </span>
-                    <span>LOCAL NETWORK ADDRESS:</span>
-                    <span className="text-slate-400 font-normal">WAN:</span>
-                    <span className="text-slate-600 font-mono text-[10px]">10.140.203.254</span>
-                    <span className="text-slate-400 font-normal ml-2">GATEWAY:</span>
-                    <span className="text-slate-600 font-mono text-[10px]">10.140.203.1</span>
-                  </span>
-                  <span className="bg-slate-50 border border-slate-200 px-2 py-0.5 rounded font-mono text-slate-800 flex items-center gap-1 text-[10px] shrink-0">
-                    <Wifi className="w-3.5 h-3.5 text-blue-500" />
-                    IP: 10.140.203.102
-                  </span>
-                </div>
+                <WifiDiscoveryPanel />
 
                 {/* Primary Content Grid */}
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
