@@ -50,6 +50,9 @@ import {
   PlusCircle,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+const SESSION_STORAGE_KEY = 'app-current-user';
+const LAST_ACTIVITY_KEY = 'app-last-activity';
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000;
 
 const THEMES = [
   { id: 'light', name: 'Light Slate', desc: 'Clean, light minimalist', isDark: false },
@@ -63,9 +66,18 @@ const THEMES = [
 
 export default function App() {
   // Session Authentication State (different user and admin)
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem(SESSION_STORAGE_KEY);
+      const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+      return parsedUser?.email && parsedUser?.role ? parsedUser : null;
+    } catch {
+      return null;
+    }
+  });
   const [showAdminRequiredModal, setShowAdminRequiredModal] = useState(false);
   const [blockedActionName, setBlockedActionName] = useState('');
+  const sessionTimerRef = useRef(null);
 
   // Primary Workspace tab identifier
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -98,6 +110,75 @@ export default function App() {
   const [dbUsers, setDbUsers] = useState([]);
   const [requests, setRequests] = useState([]);
   const [proposalStatus, setProposalStatus] = useState(null);
+  const logoutUser = () => {
+    if (sessionTimerRef.current) {
+      clearTimeout(sessionTimerRef.current);
+      sessionTimerRef.current = null;
+    }
+    localStorage.removeItem(SESSION_STORAGE_KEY);
+    localStorage.removeItem(LAST_ACTIVITY_KEY);
+    setCurrentUser(null);
+  };
+
+  const markSessionActivity = () => {
+    if (!currentUser) return;
+    localStorage.setItem(LAST_ACTIVITY_KEY, String(Date.now()));
+  };
+
+  useEffect(() => {
+    if (!currentUser) {
+      if (sessionTimerRef.current) {
+        clearTimeout(sessionTimerRef.current);
+        sessionTimerRef.current = null;
+      }
+      return;
+    }
+
+    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(currentUser));
+
+    const scheduleAutoLogout = () => {
+      const lastActivity = Number(localStorage.getItem(LAST_ACTIVITY_KEY) || Date.now());
+      const elapsed = Date.now() - lastActivity;
+      const remaining = Math.max(0, SESSION_TIMEOUT_MS - elapsed);
+
+      if (sessionTimerRef.current) {
+        clearTimeout(sessionTimerRef.current);
+      }
+
+      if (remaining === 0) {
+        logoutUser();
+        return;
+      }
+
+      sessionTimerRef.current = setTimeout(() => {
+        logoutUser();
+      }, remaining);
+    };
+
+    const handleActivity = () => {
+      markSessionActivity();
+      scheduleAutoLogout();
+    };
+
+    if (!localStorage.getItem(LAST_ACTIVITY_KEY)) {
+      markSessionActivity();
+    }
+
+    scheduleAutoLogout();
+
+    const activityEvents = ['click', 'keydown', 'mousemove', 'mousedown', 'scroll', 'touchstart'];
+    activityEvents.forEach((eventName) => window.addEventListener(eventName, handleActivity, { passive: true }));
+    window.addEventListener('focus', handleActivity);
+
+    return () => {
+      if (sessionTimerRef.current) {
+        clearTimeout(sessionTimerRef.current);
+        sessionTimerRef.current = null;
+      }
+      activityEvents.forEach((eventName) => window.removeEventListener(eventName, handleActivity));
+      window.removeEventListener('focus', handleActivity);
+    };
+  }, [currentUser]);
 
   // Load from SQL backend
   const fetchDevices = async () => {
@@ -142,6 +223,20 @@ export default function App() {
        fetchDbUsers();
        fetchRequests();
     }
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const syncWorkspaceState = () => {
+      fetchDevices();
+      fetchRequests();
+    };
+
+    syncWorkspaceState();
+    const intervalId = setInterval(syncWorkspaceState, 3000);
+
+    return () => clearInterval(intervalId);
   }, [currentUser]);
 
   useEffect(() => {
@@ -1005,7 +1100,12 @@ export default function App() {
   const criticalAlertsCount = activeAlerts.filter(a => a.type === 'critical').length;
 
   if (!currentUser) {
-    return <LoginPage onLogin={(email, role) => setCurrentUser({ email, role })} />;
+    return <LoginPage onLogin={(email, role) => {
+      const nextUser = { email, role };
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(nextUser));
+      localStorage.setItem(LAST_ACTIVITY_KEY, String(Date.now()));
+      setCurrentUser(nextUser);
+    }} />;
   }
 
   return (
@@ -1339,7 +1439,7 @@ export default function App() {
                   <button
                     onClick={() => {
                       setIsMobileMenuOpen(false);
-                      setCurrentUser(null);
+                        logoutUser();
                     }}
                     className="py-2 px-2 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-950/50 text-rose-700 dark:text-rose-300 text-[10px] font-bold rounded-lg cursor-pointer transition-colors text-center uppercase tracking-wider flex items-center justify-center gap-1"
                   >
@@ -1477,7 +1577,7 @@ export default function App() {
                   {currentUser.role === 'admin' ? 'Demote' : 'Escalate'}
                 </button>
                 <button
-                  onClick={() => setCurrentUser(null)}
+                  onClick={() => logoutUser()}
                   className="py-1.5 px-2 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 text-[10px] font-bold rounded-lg cursor-pointer transition-colors text-center uppercase tracking-wider flex items-center justify-center gap-1 font-sans"
                 >
                   <LogOut className="w-3 h-3" />
@@ -1495,7 +1595,7 @@ export default function App() {
                 <User className="w-4 h-4" />
               </button>
               <button
-                onClick={() => setCurrentUser(null)}
+                onClick={() => logoutUser()}
                 className="p-2 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 dark:hover:bg-rose-900/45 rounded-lg text-rose-650 transition-colors cursor-pointer"
                 title="Sign Out"
               >
@@ -2944,7 +3044,10 @@ export default function App() {
                   <div className="flex gap-2 text-xs font-bold pt-2">
                     <button
                       onClick={() => {
-                        setCurrentUser({ email: 'admin@robros.io', role: 'admin' });
+                        const nextUser = { email: 'admin@robros.io', role: 'admin' };
+                        localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(nextUser));
+                        localStorage.setItem(LAST_ACTIVITY_KEY, String(Date.now()));
+                        setCurrentUser(nextUser);
                         pushLog('Credentials manager', 'Session elevated to Root Administrator credentials', 'success');
                       }}
                       className="px-4 py-2 bg-gradient-to-r from-blue-600 to-[#4f46e5] hover:from-blue-700 hover:to-[#4338ca] text-white rounded-lg shadow-xs cursor-pointer text-[11px]"
@@ -2953,7 +3056,10 @@ export default function App() {
                     </button>
                     <button
                       onClick={() => {
-                        setCurrentUser({ email: 'vaishakh884@gmail.com', role: 'user' });
+                        const nextUser = { email: 'vaishakh884@gmail.com', role: 'user' };
+                        localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(nextUser));
+                        localStorage.setItem(LAST_ACTIVITY_KEY, String(Date.now()));
+                        setCurrentUser(nextUser);
                         pushLog('Credentials manager', 'Session restricted to Standard Operator', 'info');
                       }}
                       className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-650 rounded-lg cursor-pointer text-[11px] font-semibold"
@@ -3194,7 +3300,7 @@ export default function App() {
                         </button>
 
                         <button
-                          onClick={() => setCurrentUser(null)}
+                          onClick={() => logoutUser()}
                           className="px-3.5 py-2 bg-rose-50 hover:bg-rose-105 border border-rose-100 dark:bg-rose-955/30 dark:border-rose-900 dark:text-rose-400 dark:hover:bg-rose-950/50 text-rose-750 rounded-lg text-[11px] font-bold cursor-pointer transition-all flex items-center gap-1.5 font-sans"
                         >
                           <LogOut className="w-3.5 h-3.5" />
