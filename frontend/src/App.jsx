@@ -108,6 +108,7 @@ export default function App() {
   // Application state (Linked directly to SQLite Relational Database)
   const [devices, setDevices] = useState([]);
   const [dbUsers, setDbUsers] = useState([]);
+  const [hasLoadedUsers, setHasLoadedUsers] = useState(false);
   const [requests, setRequests] = useState([]);
   const [proposalStatus, setProposalStatus] = useState(null);
   const logoutUser = () => {
@@ -199,6 +200,7 @@ export default function App() {
       const data = await res.json();
       if (Array.isArray(data)) {
         setDbUsers(data);
+        setHasLoadedUsers(true);
       }
     } catch (err) {
       console.error('Failed to load users from SQL', err);
@@ -230,6 +232,7 @@ export default function App() {
 
     const syncWorkspaceState = () => {
       fetchDevices();
+      fetchDbUsers();
       fetchRequests();
     };
 
@@ -238,6 +241,19 @@ export default function App() {
 
     return () => clearInterval(intervalId);
   }, [currentUser]);
+
+  useEffect(() => {
+    if (!currentUser || !hasLoadedUsers) return;
+
+    const userStillExists = dbUsers.some((u) =>
+      String(u?.email || '').toLowerCase() === currentUser.email.toLowerCase()
+    );
+
+    if (!userStillExists) {
+      window.alert('Your account no longer has access. You have been signed out.');
+      logoutUser();
+    }
+  }, [currentUser, dbUsers, hasLoadedUsers]);
 
   useEffect(() => {
     if (currentUser && currentUser.role !== 'admin' && (activeTab === 'users' || activeTab === 'admin')) {

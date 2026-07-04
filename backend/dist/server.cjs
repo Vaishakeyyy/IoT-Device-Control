@@ -350,12 +350,12 @@ async function startServer() {
   const PORT = Number(process.env.PORT || 3e3);
   app.use(import_express.default.json());
   async function getUserRole(email) {
-    if (!email) return "user";
+    if (!email) return null;
     try {
       const user = await db.queryOne("SELECT role FROM users WHERE LOWER(email) = ?", [email.toLowerCase()]);
-      return user ? user.role : "user";
+      return user ? user.role : null;
     } catch {
-      return "user";
+      return null;
     }
   }
   app.post("/api/login", async (req, res) => {
@@ -427,6 +427,9 @@ async function startServer() {
     const { id, isOn } = req.body;
     const userEmail = req.headers["x-user-email"];
     const role = await getUserRole(userEmail);
+    if (!userEmail || !role) {
+      return res.status(401).json({ error: "Session invalid. Please sign in again." });
+    }
     if (role === "user") {
       try {
         await db.execute(
@@ -456,6 +459,9 @@ async function startServer() {
     const { id, name, type, room, value, metricUnit, energyUsage, status, wifi_ip } = req.body;
     const userEmail = req.headers["x-user-email"];
     const role = await getUserRole(userEmail);
+    if (!userEmail || !role) {
+      return res.status(401).json({ error: "Session invalid. Please sign in again." });
+    }
     if (role === "user") {
       try {
         await db.execute(
@@ -488,6 +494,9 @@ async function startServer() {
     const { id } = req.params;
     const userEmail = req.headers["x-user-email"];
     const role = await getUserRole(userEmail);
+    if (!userEmail || !role) {
+      return res.status(401).json({ error: "Session invalid. Please sign in again." });
+    }
     if (role === "user") {
       try {
         await db.execute(
@@ -524,7 +533,11 @@ async function startServer() {
   app.post("/api/requests/:id/approve", async (req, res) => {
     const { id } = req.params;
     const adminEmail = req.headers["x-user-email"];
-    if (await getUserRole(adminEmail) !== "admin") {
+    const adminRole = await getUserRole(adminEmail);
+    if (!adminEmail || !adminRole) {
+      return res.status(401).json({ error: "Session invalid. Please sign in again." });
+    }
+    if (adminRole !== "admin") {
       return res.status(403).json({ error: "Operational override forbidden. Root privileges required." });
     }
     try {
@@ -555,7 +568,11 @@ async function startServer() {
   app.post("/api/requests/:id/reject", async (req, res) => {
     const { id } = req.params;
     const adminEmail = req.headers["x-user-email"];
-    if (await getUserRole(adminEmail) !== "admin") {
+    const adminRole = await getUserRole(adminEmail);
+    if (!adminEmail || !adminRole) {
+      return res.status(401).json({ error: "Session invalid. Please sign in again." });
+    }
+    if (adminRole !== "admin") {
       return res.status(403).json({ error: "Operational override forbidden. Root privileges required." });
     }
     try {
