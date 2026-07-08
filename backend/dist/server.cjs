@@ -406,6 +406,11 @@ async function startServer() {
   app.delete("/api/users/:id", async (req, res) => {
     const { id } = req.params;
     try {
+      const user = await db.queryOne("SELECT email FROM users WHERE id = ?", [id]);
+      if (!user) {
+        return res.status(404).json({ error: "User profile not found." });
+      }
+      await db.execute("DELETE FROM requests WHERE LOWER(user_email) = ?", [String(user.email).toLowerCase()]);
       await db.execute("DELETE FROM users WHERE id = ?", [id]);
       res.json({ success: true, message: `Profile ${id} decommissioned.` });
     } catch (err) {

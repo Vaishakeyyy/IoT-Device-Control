@@ -80,12 +80,127 @@ export default function App() {
   const sessionTimerRef = useRef(null);
 
   // Primary Workspace tab identifier
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(() => {
+    const hash = window.location.hash.replace('#', '');
+    const validTabs = ['dashboard', 'devices', 'schedules', 'alerts', 'users', 'admin', 'profile'];
+    return validTabs.includes(hash) ? hash : 'dashboard';
+  });
+
+  // Synchronize activeTab to URL hash
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash !== activeTab) {
+      window.location.hash = activeTab;
+    }
+  }, [activeTab]);
+
+  // Synchronize browser history navigation (back/forward) to activeTab
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      const validTabs = ['dashboard', 'devices', 'schedules', 'alerts', 'users', 'admin', 'profile'];
+      if (validTabs.includes(hash)) {
+        setActiveTab(hash);
+      } else if (hash === '') {
+        setActiveTab('dashboard');
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
 
   // Theme Management System
   const [activeTheme, setActiveTheme] = useState(() => {
     return localStorage.getItem('app-theme') || 'lightdark';
   });
+
+  const dynamicIslandTheme = (() => {
+    switch (activeTheme) {
+      case 'light':
+        return {
+          shell: 'bg-white/95 border-slate-200 text-slate-900 hover:border-blue-500',
+          panel: 'bg-white border-slate-200 text-slate-900',
+          accentLabel: 'text-blue-700',
+          bodyText: 'text-slate-700',
+          subText: 'text-slate-500',
+          chip: 'bg-slate-100 border-slate-200 text-slate-700',
+          divider: 'border-slate-200',
+          quietBtn: 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700 hover:text-slate-900',
+          primaryBtn: 'bg-blue-600 hover:bg-blue-700 text-white',
+          bars: ['bg-blue-500', 'bg-blue-400', 'bg-blue-600'],
+        };
+      case 'forest':
+        return {
+          shell: 'bg-[#fcfbfa] border-[#dedbd3] text-[#1a2e20] hover:border-[#2c5e3b]',
+          panel: 'bg-[#fcfbfa] border-[#dedbd3] text-[#1a2e20]',
+          accentLabel: 'text-[#2c5e3b]',
+          bodyText: 'text-[#1a2e20]',
+          subText: 'text-[#5c6e5e]',
+          chip: 'bg-[#eae7df] border-[#dedbd3] text-[#1a2e20]',
+          divider: 'border-[#dedbd3]',
+          quietBtn: 'bg-[#eae7df] hover:bg-[#dedbd3] border-[#dedbd3] text-[#1a2e20] hover:text-[#1a2e20]',
+          primaryBtn: 'bg-[#2c5e3b] hover:bg-[#1e3d27] text-white',
+          bars: ['bg-[#2c5e3b]', 'bg-[#3a7b4d]', 'bg-[#245032]'],
+        };
+      case 'nordic':
+        return {
+          shell: 'bg-[#121c2c] border-[#1e2e46] text-slate-100 hover:border-sky-400',
+          panel: 'bg-[#121c2c] border-[#1e2e46] text-slate-100',
+          accentLabel: 'text-sky-300',
+          bodyText: 'text-slate-100',
+          subText: 'text-slate-400',
+          chip: 'bg-[#1a273a] border-[#1e2e46] text-slate-200',
+          divider: 'border-[#1e2e46]',
+          quietBtn: 'bg-[#1a273a] hover:bg-[#22324a] border-[#1e2e46] text-slate-300 hover:text-white',
+          primaryBtn: 'bg-sky-500 hover:bg-sky-600 text-white',
+          bars: ['bg-sky-400', 'bg-cyan-300', 'bg-sky-500'],
+        };
+      case 'dracula':
+        return {
+          shell: 'bg-[#120d24] border-[#281d45] text-[#f8f8f2] hover:border-pink-400',
+          panel: 'bg-[#120d24] border-[#281d45] text-[#f8f8f2]',
+          accentLabel: 'text-pink-300',
+          bodyText: 'text-[#f8f8f2]',
+          subText: 'text-[#bd93f9]',
+          chip: 'bg-[#181230] border-[#281d45] text-[#f8f8f2]',
+          divider: 'border-[#281d45]',
+          quietBtn: 'bg-[#181230] hover:bg-[#221a3f] border-[#281d45] text-[#bd93f9] hover:text-[#f8f8f2]',
+          primaryBtn: 'bg-pink-500 hover:bg-pink-400 text-black',
+          bars: ['bg-pink-400', 'bg-fuchsia-400', 'bg-purple-400'],
+        };
+      case 'cyberpunk':
+        return {
+          shell: 'bg-black border-amber-500 text-amber-400 hover:border-amber-400',
+          panel: 'bg-black border-amber-500 text-amber-400',
+          accentLabel: 'text-amber-400',
+          bodyText: 'text-amber-300',
+          subText: 'text-amber-700',
+          chip: 'bg-[#121212] border-[#262626] text-amber-300',
+          divider: 'border-[#262626]',
+          quietBtn: 'bg-[#121212] hover:bg-[#1f1f1f] border-[#262626] text-amber-400 hover:text-amber-300',
+          primaryBtn: 'bg-amber-500 hover:bg-amber-600 text-black',
+          bars: ['bg-amber-500', 'bg-amber-400', 'bg-amber-600'],
+        };
+      case 'dark':
+      case 'lightdark':
+      default:
+        return {
+          shell: 'bg-slate-950 border-slate-800 text-white hover:border-blue-500',
+          panel: 'bg-slate-950 border-slate-800 text-white',
+          accentLabel: 'text-blue-400',
+          bodyText: 'text-slate-100',
+          subText: 'text-slate-400',
+          chip: 'bg-slate-900/50 border-slate-900 text-slate-300',
+          divider: 'border-slate-900',
+          quietBtn: 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300 hover:text-slate-200',
+          primaryBtn: 'bg-blue-600 hover:bg-blue-700 text-white',
+          bars: ['bg-blue-500', 'bg-blue-400', 'bg-blue-600'],
+        };
+    }
+  })();
 
   useEffect(() => {
     const html = document.documentElement;
@@ -1166,7 +1281,7 @@ export default function App() {
               /* Compact Pill Mode */
               <div 
                 onClick={() => setIsDynamicIslandExpanded(true)}
-                className="bg-slate-950 dark:bg-black border border-slate-800 text-white rounded-full h-11 px-4 flex items-center justify-between gap-4 cursor-pointer hover:border-blue-500 shadow-2xl transition-all duration-300 w-[240px] sm:w-[340px] md:w-[380px]"
+                className={`rounded-full h-11 px-4 flex items-center justify-between gap-4 cursor-pointer shadow-2xl transition-all duration-300 w-[240px] sm:w-[340px] md:w-[380px] border ${dynamicIslandTheme.shell}`}
                 id="dynamic-island-pill"
               >
                 <div className="flex items-center gap-2 overflow-hidden w-full">
@@ -1182,25 +1297,25 @@ export default function App() {
                       dynamicIslandAlert.type === 'warning' ? 'bg-amber-600' : 'bg-blue-600'
                     }`} />
                   </span>
-                  <span className="text-[9px] uppercase font-mono font-black tracking-wider text-blue-500 dark:text-blue-400 shrink-0">
+                  <span className={`text-[9px] uppercase font-mono font-black tracking-wider shrink-0 ${dynamicIslandTheme.accentLabel}`}>
                     {dynamicIslandAlert.category || 'SYSTEM'}:
                   </span>
-                  <span className="text-[10px] font-semibold text-slate-100 truncate flex-1 block">
+                  <span className={`text-[10px] font-semibold truncate flex-1 block ${dynamicIslandTheme.bodyText}`}>
                     {dynamicIslandAlert.text}
                   </span>
                 </div>
 
                 {/* Animated wave form */}
                 <div className="flex items-center gap-0.5 shrink-0 h-3">
-                  <span className="w-0.5 h-2 bg-blue-500 rounded-full animate-bounce" />
-                  <span className="w-0.5 h-3.5 bg-blue-400 rounded-full animate-bounce [animation-delay:0.15s]" />
-                  <span className="w-0.5 h-1.5 bg-blue-600 rounded-full animate-bounce [animation-delay:0.3s]" />
+                  <span className={`w-0.5 h-2 rounded-full animate-bounce ${dynamicIslandTheme.bars[0]}`} />
+                  <span className={`w-0.5 h-3.5 rounded-full animate-bounce [animation-delay:0.15s] ${dynamicIslandTheme.bars[1]}`} />
+                  <span className={`w-0.5 h-1.5 rounded-full animate-bounce [animation-delay:0.3s] ${dynamicIslandTheme.bars[2]}`} />
                 </div>
               </div>
             ) : (
               /* Expanded Dynamic Island Mode */
               <div
-                className="bg-slate-950 dark:bg-black border border-slate-800 text-white rounded-[24px] p-5 shadow-2xl w-[320px] sm:w-[420px] space-y-4"
+                className={`border rounded-[24px] p-5 shadow-2xl w-[320px] sm:w-[420px] space-y-4 ${dynamicIslandTheme.panel}`}
                 id="dynamic-island-expanded-box"
               >
                 {/* Header block with animated badge and minimize */}
@@ -1221,7 +1336,7 @@ export default function App() {
                       )}
                     </div>
                     <div>
-                      <span className="text-[9px] font-mono font-bold text-slate-400 block uppercase tracking-wider">Subgrid Live Broadcast</span>
+                      <span className={`text-[9px] font-mono font-bold block uppercase tracking-wider ${dynamicIslandTheme.subText}`}>Subgrid Live Broadcast</span>
                       <div className="flex items-center gap-1.5">
                         <h4 className="text-xs font-black font-mono tracking-tight uppercase">
                           {dynamicIslandAlert.category || 'SYSTEM'} OVERRIDE
@@ -1237,7 +1352,7 @@ export default function App() {
                       e.stopPropagation();
                       setIsDynamicIslandExpanded(false);
                     }}
-                    className="p-1 hover:bg-slate-900 border border-transparent hover:border-slate-800 text-slate-400 hover:text-white rounded-lg cursor-pointer transition-colors"
+                    className={`p-1 border rounded-lg cursor-pointer transition-colors ${dynamicIslandTheme.quietBtn}`}
                     title="Minimize Island"
                   >
                     <X className="w-3.5 h-3.5" />
@@ -1249,16 +1364,16 @@ export default function App() {
                   <p className="text-xs font-bold text-slate-105 leading-normal font-sans">
                     {dynamicIslandAlert.text}
                   </p>
-                  <div className="flex items-center gap-2 bg-slate-900/50 border border-slate-900 px-2.5 py-2 rounded-lg">
+                  <div className={`flex items-center gap-2 px-2.5 py-2 rounded-lg border ${dynamicIslandTheme.chip}`}>
                     <div className="w-1.5 h-1.5 bg-blue-500 rounded-full shrink-0 animate-ping" />
-                    <span className="text-[10px] text-slate-300 font-mono truncate" title={dynamicIslandAlert.meta}>
+                    <span className={`text-[10px] font-mono truncate ${dynamicIslandTheme.subText}`} title={dynamicIslandAlert.meta}>
                       {dynamicIslandAlert.meta}
                     </span>
                   </div>
                 </div>
 
                 {/* Quick Diagnostics Action Controls */}
-                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-900">
+                <div className={`grid grid-cols-2 gap-2 pt-2 border-t ${dynamicIslandTheme.divider}`}>
                   {dynamicIslandAlert.id && dynamicIslandAlert.id.startsWith('al-') ? (
                     <>
                       <button
@@ -1269,7 +1384,7 @@ export default function App() {
                           setDynamicIslandAlert(null);
                           setIsDynamicIslandExpanded(false);
                         }}
-                        className="w-full py-2 bg-slate-900 hover:bg-red-950/60 hover:text-rose-450 border border-slate-800 hover:border-rose-900 text-[11px] font-bold rounded-xl cursor-pointer transition-colors text-slate-305 font-sans"
+                        className={`w-full py-2 border text-[11px] font-bold rounded-xl cursor-pointer transition-colors font-sans ${dynamicIslandTheme.quietBtn}`}
                       >
                         Dismiss & Close
                       </button>
@@ -1280,7 +1395,7 @@ export default function App() {
                           setActiveTab('alerts');
                           setIsDynamicIslandExpanded(false);
                         }}
-                        className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-[11px] font-bold rounded-xl cursor-pointer transition-all hover:shadow-lg text-white font-sans flex items-center justify-center gap-1.5"
+                        className={`w-full py-2 text-[11px] font-bold rounded-xl cursor-pointer transition-all hover:shadow-lg font-sans flex items-center justify-center gap-1.5 ${dynamicIslandTheme.primaryBtn}`}
                       >
                         <Activity className="w-3.5 h-3.5 animate-pulse" />
                         Run Diagnostics
@@ -1293,7 +1408,7 @@ export default function App() {
                           setDynamicIslandAlert(null);
                           setIsDynamicIslandExpanded(false);
                         }}
-                        className="w-full py-2 bg-slate-900 hover:bg-slate-850 hover:text-slate-200 border border-slate-800 text-[11px] font-bold rounded-xl cursor-pointer transition-colors text-slate-305 font-sans"
+                        className={`w-full py-2 border text-[11px] font-bold rounded-xl cursor-pointer transition-colors font-sans ${dynamicIslandTheme.quietBtn}`}
                       >
                         Close
                       </button>
@@ -1304,7 +1419,7 @@ export default function App() {
                           setDynamicIslandAlert(null);
                           setIsDynamicIslandExpanded(false);
                         }}
-                        className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-[11px] font-bold rounded-xl cursor-pointer transition-all hover:shadow-lg text-white font-sans flex items-center justify-center gap-1.5"
+                        className={`w-full py-2 text-[11px] font-bold rounded-xl cursor-pointer transition-all hover:shadow-lg font-sans flex items-center justify-center gap-1.5 ${dynamicIslandTheme.primaryBtn}`}
                       >
                         <Bell className="w-3.5 h-3.5 animate-bounce" />
                         Open Feed
@@ -2946,6 +3061,7 @@ export default function App() {
                                             );
                                             
                                             fetchDbUsers();
+                                            fetchRequests();
                                           } catch (err) {
                                             alert(err.message);
                                           }
